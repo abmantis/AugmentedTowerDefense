@@ -2,6 +2,8 @@
 #define TrackingSystem_h__
 #pragma once
 
+
+
 struct Marker
 {
 	Marker();

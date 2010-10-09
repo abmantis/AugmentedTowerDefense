@@ -15,7 +15,7 @@
 
 #include <videoInput.h>
 
-#include <ARToolKitPlus/TrackerMultiMarkerImpl.h>
+#include <ARToolKitPlus/TrackerMultiMarker.h>
 
 #include <Ogre.h>
 #include <OgreQuaternion.h>

@@ -2,6 +2,8 @@
 
 #include "TrackingSystem.h"
 
+#include "ARToolKitPlus/TrackerMultiMarkerImpl.h"
+
 
 using namespace std;
 using namespace Ogre;
