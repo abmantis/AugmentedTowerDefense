@@ -92,7 +92,7 @@ bool OgreAppLogic::update(Ogre::Real deltaTime)
 		}
 	}
 	if (mAnimState)
-		mAnimState->addTime(deltaTime*5);
+		mAnimState->addTime(deltaTime);
 
 	bool result = processInputs(deltaTime);
 	return result;
@@ -155,7 +155,7 @@ void OgreAppLogic::createCamera(void)
 
 void OgreAppLogic::createScene(void)
 {
-//	mSceneMgr->setSkyBox(true, "Examples/GridSkyBox");
+	mSceneMgr->setSkyBox(true, "Examples/Grid");
 
 	Ogre::Entity* ent = mSceneMgr->createEntity("Sinbad.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
 
@@ -257,6 +257,16 @@ bool OgreAppLogic::OISListener::mouseReleased( const OIS::MouseEvent &arg, OIS::
 
 bool OgreAppLogic::OISListener::keyPressed( const OIS::KeyEvent &arg )
 {
+	Ogre::SceneNode *pWebcamNode = static_cast<Ogre::SceneNode*>(mParent->mCameraNode->getChild("planeNode"));
+	switch (arg.key)
+	{
+	case OIS::KC_UP:
+		pWebcamNode->translate(0,0,500);
+		break;
+	case OIS::KC_DOWN:
+		pWebcamNode->translate(0,0,-500);
+		break;
+	}
 	return true;
 }
 
