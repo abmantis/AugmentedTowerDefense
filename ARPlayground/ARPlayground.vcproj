@@ -18,7 +18,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(ProjectDir)\bin\$(ConfigurationName)"
+			OutputDirectory="$(ProjectDir)bin\$(ConfigurationName)"
 			IntermediateDirectory="obj\$(ConfigurationName)"
 			ConfigurationType="1"
 			CharacterSet="2"
@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm135"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;D:\SDKs\OgreSDK_vc9_v1-7-1\include&quot;;D:\SDKs\ARToolKitPlus2.1.1\include;D:\SDKs\of_preRelease_v0.06_win32_VS2008\libs\videoInput\include;&quot;D:\SDKs\OgreSDK_vc9_v1-7-1\boost_1_42&quot;;&quot;D:\SDKs\OgreSDK_vc9_v1-7-1\include\OGRE&quot;;include"
+				AdditionalIncludeDirectories="&quot;D:\SDKs\OgreSDK_vc9_v1-7-2\include&quot;;D:\SDKs\ARToolKitPlus2.1.1\include;D:\SDKs\of_preRelease_v0.06_win32_VS2008\libs\videoInput\include;&quot;D:\SDKs\OgreSDK_vc9_v1-7-2\boost_1_44&quot;;&quot;D:\SDKs\OgreSDK_vc9_v1-7-2\include\OGRE&quot;;include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
 				GeneratePreprocessedFile="0"
 				MinimalRebuild="true"
@@ -67,7 +67,7 @@
 				AdditionalDependencies="OgreMain_d.lib OIS_d.lib ARToolKitPlusd.lib videoInput.lib"
 				OutputFile="$(OutDir)\$(ProjectName).exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="D:\SDKs\ARToolKitPlus2.1.1\lib\Win32;D:\SDKs\of_preRelease_v0.06_win32_VS2008\libs\videoInput\lib;&quot;D:\SDKs\OgreSDK_vc9_v1-7-1\lib\debug&quot;;&quot;D:\SDKs\OgreSDK_vc9_v1-7-1\boost_1_42\lib&quot;"
+				AdditionalLibraryDirectories="D:\SDKs\ARToolKitPlus2.1.1\lib\Win32;D:\SDKs\of_preRelease_v0.06_win32_VS2008\libs\videoInput\lib;&quot;D:\SDKs\OgreSDK_vc9_v1-7-2\lib\debug&quot;;&quot;D:\SDKs\OgreSDK_vc9_v1-7-2\boost_1_44\lib&quot;"
 				IgnoreDefaultLibraryNames="atlthunk.lib"
 				GenerateDebugInformation="true"
 				SubSystem="0"
