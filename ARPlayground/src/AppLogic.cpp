@@ -80,10 +80,10 @@ bool AppLogic::update(Ogre::Real deltaTime)
 			mCameraNode->setOrientation(mTrackingSystem->getOrientation());
 			mCameraNode->setPosition(mTrackingSystem->getTranslation());
 		}
-		else
-		{
-			mObjectNode->setVisible(false);
-		}
+		//else
+		//{
+		//	mObjectNode->setVisible(false);
+		//}
 	}
 	if (mAnimState)
 		mAnimState->addTime(deltaTime);
@@ -170,8 +170,8 @@ void AppLogic::createScene(void)
 	mAnimState->setLoop(true);
 	mAnimState->setEnabled(true);
 
-	DebugStuff::CreateAxis(mSceneMgr);
 
+	DebugStuff::CreateAxis(mSceneMgr);
 }
 
 void AppLogic::initTracking(int width, int height)

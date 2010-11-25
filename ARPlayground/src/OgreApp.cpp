@@ -46,7 +46,7 @@ bool OgreApp::init(void)
 
 	mRoot = new Ogre::Root("plugins.cfg", "ogre.cfg", "Ogre.log");
 
-	if(!mRoot->showConfigDialog())
+	if(!mRoot->restoreConfig() && !mRoot->showConfigDialog())
 		return false;
 
 	mWindow = mRoot->initialise(true);
