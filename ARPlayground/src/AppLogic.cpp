@@ -1,13 +1,14 @@
 #include "StdAfx.h"
-#include "OgreAppLogic.h"
+#include "AppLogic.h"
 #include "OgreApp.h"
 #include "Chrono.h"
 #include "StatsFrameListener.h"
+#include "DebugStuff.h"
 
 
 using namespace Ogre;
 
-OgreAppLogic::OgreAppLogic() : mApplication(0)
+AppLogic::AppLogic() : mApplication(0)
 {
 	// ogre
 	mSceneMgr		= 0;
@@ -24,17 +25,17 @@ OgreAppLogic::OgreAppLogic() : mApplication(0)
 	mOISListener.mParent = this;
 }
 
-OgreAppLogic::~OgreAppLogic()
+AppLogic::~AppLogic()
 {}
 
 // preAppInit
-bool OgreAppLogic::preInit(const Ogre::StringVector &commandArgs)
+bool AppLogic::preInit(const Ogre::StringVector &commandArgs)
 {
 	return true;
 }
 
 // postAppInit
-bool OgreAppLogic::init(void)
+bool AppLogic::init(void)
 {
 	createSceneManager();
 	createViewport();
@@ -60,27 +61,20 @@ bool OgreAppLogic::init(void)
 	return true;
 }
 
-bool OgreAppLogic::preUpdate(Ogre::Real deltaTime)
+bool AppLogic::preUpdate(Ogre::Real deltaTime)
 {
 	return true;
 }
 
-bool OgreAppLogic::update(Ogre::Real deltaTime)
+bool AppLogic::update(Ogre::Real deltaTime)
 {
 	//If there is a new frame available on video device
 	if (mVideoDevice->update())
 	{
-		//RGB -> Gray conversion
-		//Ogre::PixelUtil::bulkPixelConversion(mVideoDevice->getBufferData(), Ogre::PF_B8G8R8, mWebcamBufferL8, Ogre::PF_L8, mVideoDevice->getWidth()*mVideoDevice->getHeight());
-
-		//Create Gray level PixelBox
-		//Ogre::PixelBox box(mVideoDevice->getWidth(), mVideoDevice->getHeight(), 1, Ogre::PF_L8, (void*) mWebcamBufferL8);
 		Ogre::PixelBox box(mVideoDevice->getWidth(), mVideoDevice->getHeight(), 1, Ogre::PF_B8G8R8, (void*) mVideoDevice->getBufferData());
 
 		//Tracking using ArToolKitPlus
-		mTrackingSystem->update(box);
-
-		if (mTrackingSystem->isPoseComputed())
+		if (mTrackingSystem->update(box))
 		{
 			mObjectNode->setVisible(true);
 			mCameraNode->setOrientation(mTrackingSystem->getOrientation());
@@ -98,7 +92,7 @@ bool OgreAppLogic::update(Ogre::Real deltaTime)
 	return result;
 }
 
-void OgreAppLogic::shutdown(void)
+void AppLogic::shutdown(void)
 {
 	mVideoDevice->shutdown();
 	mVideoDevice = NULL;
@@ -118,51 +112,52 @@ void OgreAppLogic::shutdown(void)
 	mSceneMgr = 0;
 }
 
-void OgreAppLogic::postShutdown(void)
+void AppLogic::postShutdown(void)
 {
 
 }
 
 //--------------------------------- Init --------------------------------
 
-void OgreAppLogic::createSceneManager(void)
+void AppLogic::createSceneManager(void)
 {
 	mSceneMgr = mApplication->getOgreRoot()->createSceneManager(ST_GENERIC, "SceneManager");
 }
 
-void OgreAppLogic::createViewport(void)
+void AppLogic::createViewport(void)
 {
 	mViewport = mApplication->getRenderWindow()->addViewport(0);
 }
 
-void OgreAppLogic::createCamera(void)
+void AppLogic::createCamera(void)
 {
 	mCamera = mSceneMgr->createCamera("camera");
 	mCamera->setNearClipDistance(0.5);
 	mCamera->setFarClipDistance(50000);
 	mCamera->setPosition(0, 0, 0);
-	mCamera->lookAt(0, 0, 1);
+	mCamera->lookAt(0, 0, -1);
 	mCamera->setFOVy(Degree(40)); //FOVy camera Ogre = 40°
 	mCamera->setAspectRatio((float) mViewport->getActualWidth() / (float) mViewport->getActualHeight());	
 	mViewport->setCamera(mCamera);
 
 	mCameraNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cameraNode");
-	mCameraNode->setPosition(0, 1700, 0);
-	mCameraNode->lookAt(Vector3(0, 1700, -1), Node::TS_WORLD);
+	mCameraNode->setPosition(0, 0, 500);
+	//mCameraNode->lookAt(Vector3(0, 1700, -1), Node::TS_WORLD);
+	mCameraNode->lookAt(Vector3(0, 0, 0), Node::TS_WORLD);
 	mCameraNode->attachObject(mCamera);
 	mCameraNode->setFixedYawAxis(true, Vector3::UNIT_Y);
 }
 
-void OgreAppLogic::createScene(void)
+void AppLogic::createScene(void)
 {
 	mSceneMgr->setSkyBox(true, "Examples/Grid");
 
+	Ogre::Real scale = 10;
 	Ogre::Entity* ent = mSceneMgr->createEntity("Sinbad.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
 
 	mObjectNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cube");	
-	mObjectNode->setOrientation(Quaternion(Degree(90.f), Vector3::UNIT_X));
-	Ogre::Real scale = 22;
-	mObjectNode->setPosition(0, 0, 5*scale);
+//	mObjectNode->setOrientation(Quaternion(Degree(90.f), Vector3::UNIT_X));
+	mObjectNode->setPosition(0, 5*scale, 0);
 	mObjectNode->setScale(Ogre::Vector3::UNIT_SCALE*scale);
 	mObjectNode->attachObject(ent);
 
@@ -175,15 +170,18 @@ void OgreAppLogic::createScene(void)
 	mAnimState->setLoop(true);
 	mAnimState->setEnabled(true);
 
+	DebugStuff::CreateAxis(mSceneMgr);
+
 }
 
-void OgreAppLogic::initTracking(int width, int height)
+void AppLogic::initTracking(int width, int height)
 {
 	if (mVideoDeviceManager.size() > 0)
 	{
 		mVideoDevice = mVideoDeviceManager[0];
 		mVideoDevice->init(width, height, 60);
 		mVideoDevice->createTexture("WebcamTexture");
+		mVideoDevice->showControlPanel();
 		mWebcamBufferL8 = new unsigned char[width*height];
 		mTrackingSystem->init(width, height);
 
@@ -193,7 +191,7 @@ void OgreAppLogic::initTracking(int width, int height)
 		technique->createPass();
 		material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
 		material->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
-		material->getTechnique(0)->getPass(0)->createTextureUnitState("WebcamTexture");
+	//	material->getTechnique(0)->getPass(0)->createTextureUnitState("WebcamTexture");
 	}
 	else
 	{
@@ -201,7 +199,7 @@ void OgreAppLogic::initTracking(int width, int height)
 	}
 }
 
-void OgreAppLogic::createWebcamPlane(int width, int height, Ogre::Real _distanceFromCamera)
+void AppLogic::createWebcamPlane(int width, int height, Ogre::Real _distanceFromCamera)
 {
 	// Create a prefab plane dedicated to display video
 	float videoAspectRatio = width / (float) height;
@@ -229,7 +227,7 @@ void OgreAppLogic::createWebcamPlane(int width, int height, Ogre::Real _distance
 
 //--------------------------------- update --------------------------------
 
-bool OgreAppLogic::processInputs(Ogre::Real deltaTime)
+bool AppLogic::processInputs(Ogre::Real deltaTime)
 {
 	OIS::Keyboard *keyboard = mApplication->getKeyboard();
 	if(keyboard->isKeyDown(OIS::KC_ESCAPE))
@@ -240,22 +238,22 @@ bool OgreAppLogic::processInputs(Ogre::Real deltaTime)
 	return true;
 }
 
-bool OgreAppLogic::OISListener::mouseMoved( const OIS::MouseEvent &arg )
+bool AppLogic::OISListener::mouseMoved( const OIS::MouseEvent &arg )
 {
 	return true;
 }
 
-bool OgreAppLogic::OISListener::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
+bool AppLogic::OISListener::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 {
 	return true;
 }
 
-bool OgreAppLogic::OISListener::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
+bool AppLogic::OISListener::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 {
 	return true;
 }
 
-bool OgreAppLogic::OISListener::keyPressed( const OIS::KeyEvent &arg )
+bool AppLogic::OISListener::keyPressed( const OIS::KeyEvent &arg )
 {
 	Ogre::SceneNode *pWebcamNode = static_cast<Ogre::SceneNode*>(mParent->mCameraNode->getChild("planeNode"));
 	switch (arg.key)
@@ -270,7 +268,7 @@ bool OgreAppLogic::OISListener::keyPressed( const OIS::KeyEvent &arg )
 	return true;
 }
 
-bool OgreAppLogic::OISListener::keyReleased( const OIS::KeyEvent &arg )
+bool AppLogic::OISListener::keyReleased( const OIS::KeyEvent &arg )
 {
 	return true;
 }

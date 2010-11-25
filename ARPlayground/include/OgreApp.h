@@ -2,7 +2,7 @@
 #define OGREAPP_H
 #pragma once
 
-class OgreAppLogic;
+class AppLogic;
 
 class OgreApp : public Ogre::Singleton<OgreApp>
 {
@@ -11,7 +11,7 @@ public:
 	OgreApp();
 	~OgreApp();
 	
-	void setAppLogic(OgreAppLogic *appLogic);
+	void setAppLogic(AppLogic *appLogic);
 
 	void run(void);
 	bool update(Ogre::Real deltaTime);
@@ -55,7 +55,7 @@ protected:
 	OIS::Mouse* mMouse;  
 
 	// Classes supplied by the user
-	OgreAppLogic *mAppLogic;
+	AppLogic *mAppLogic;
 };
 
 #endif // OGREAPP_H

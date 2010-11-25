@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "OgreApp.h"
-#include "OgreAppLogic.h"
+#include "AppLogic.h"
 #include "OgreAppFrameListener.h"
 
 using namespace Ogre;
@@ -105,7 +105,7 @@ void OgreApp::shutdown(void)
 
 ////////////////////////////////////////////////
 
-void OgreApp::setAppLogic(OgreAppLogic *appLogic)
+void OgreApp::setAppLogic(AppLogic *appLogic)
 {
 	if(mAppLogic == appLogic)
 		return;

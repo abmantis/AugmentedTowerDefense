@@ -43,7 +43,7 @@ class TrackingSystem
 		Ogre::Matrix4 convert(const ARFloat _trans[3][4]) const;
 		Ogre::Quaternion mRot180Z;
 					
-		ARToolKitPlus::TrackerMultiMarker *mTracker;
+		ARToolKitPlus::TrackerMultiMarker *mTrackerMulti;
 		bool mMarkersFound;
 		bool mInitialized;
 

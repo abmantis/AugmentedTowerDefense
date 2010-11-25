@@ -1,5 +1,5 @@
-#ifndef OGREAPPLOGIC_H
-#define OGREAPPLOGIC_H
+#ifndef APPLOGIC_H
+#define APPLOGIC_H
 
 #include "VideoDeviceManager.h"
 #include "TrackingSystem.h"
@@ -7,11 +7,11 @@
 class OgreApp;
 class StatsFrameListener;
 
-class OgreAppLogic
+class AppLogic
 {
 public:
-	OgreAppLogic();
-	~OgreAppLogic();
+	AppLogic();
+	~AppLogic();
 
 	void setParentApp(OgreApp *app) { mApplication = app; }
 
@@ -69,10 +69,10 @@ protected:
 		virtual bool mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
 		virtual bool keyPressed( const OIS::KeyEvent &arg );
 		virtual bool keyReleased( const OIS::KeyEvent &arg );
-		OgreAppLogic *mParent;
+		AppLogic *mParent;
 	};
 	friend class OISListener;
 	OISListener mOISListener;
 };
 
-#endif // OGREAPPLOGIC_H
+#endif // APPLOGIC_H

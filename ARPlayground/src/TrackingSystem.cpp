@@ -32,43 +32,43 @@ TrackingSystem::TrackingSystem()
 	mInitialized = false;
 	mMarkersFound = false;
 
-	mTracker = NULL;
+	mTrackerMulti = NULL;
 }
 
 TrackingSystem::~TrackingSystem()
 {
-	delete mTracker;
+	delete mTrackerMulti;
 }
 
 void TrackingSystem::init(int _width, int _height)
 {
-	mTracker = new ARToolKitPlus::TrackerMultiMarkerImpl<6, 6, 6, 1, 8>(_width, _height);
+	mTrackerMulti = new ARToolKitPlus::TrackerMultiMarkerImpl<6, 6, 6, 1, 8>(_width, _height);
 
 	//
-	mTracker->setPixelFormat(ARToolKitPlus::PIXEL_FORMAT_BGR); //PIXEL_FORMAT_LUM
+	mTrackerMulti->setPixelFormat(ARToolKitPlus::PIXEL_FORMAT_BGR); //PIXEL_FORMAT_LUM
 
 	//
-	if(!mTracker->init(TrackingSystem::calibrationFilename.c_str(), TrackingSystem::configFilename.c_str(), 5.0f, 50000.0f))
-		throw Ogre::Exception(Ogre::Exception::ERR_INVALID_STATE, "Init failed : calibration file not found", "MultiTracker");
+	if(!mTrackerMulti->init(TrackingSystem::calibrationFilename.c_str(), TrackingSystem::configFilename.c_str(), 5.0f, 50000.0f))
+		throw Ogre::Exception(Ogre::Exception::ERR_INVALID_STATE, "Init failed : calibration file not bFound", "MultiTracker");
 
 	//Set Marker border size : thin = 0.125f & large = 0.250f
-	mTracker->setBorderWidth(0.125f);
+	mTrackerMulti->setBorderWidth(0.125f);
 
-    mTracker->setUndistortionMode(ARToolKitPlus::UNDIST_LUT);
-	mTracker->setMarkerMode(ARToolKitPlus::MARKER_ID_BCH);
-	mTracker->changeCameraSize(_width, _height);
+    mTrackerMulti->setUndistortionMode(ARToolKitPlus::UNDIST_LUT);
+	mTrackerMulti->setMarkerMode(ARToolKitPlus::MARKER_ID_BCH);
+	mTrackerMulti->changeCameraSize(_width, _height);
 
 	//Set image full res analysis on or off
 	if (TrackingSystem::isUsingFullResImage)
-		mTracker->setImageProcessingMode(ARToolKitPlus::IMAGE_FULL_RES);
+		mTrackerMulti->setImageProcessingMode(ARToolKitPlus::IMAGE_FULL_RES);
 
 	//Set History on or off
-	mTracker->setUseDetectLite(!TrackingSystem::isUsingHistory);
+	mTrackerMulti->setUseDetectLite(!TrackingSystem::isUsingHistory);
 	
 	//Set Threshold value or use auto-thresholding
-	mTracker->activateAutoThreshold(TrackingSystem::isUsingAutoThreshold);	
+	mTrackerMulti->activateAutoThreshold(TrackingSystem::isUsingAutoThreshold);	
 	if (!TrackingSystem::isUsingAutoThreshold)
-		mTracker->setThreshold(TrackingSystem::threshold);
+		mTrackerMulti->setThreshold(TrackingSystem::threshold);
 
 	mInitialized = true;
 }
@@ -78,24 +78,23 @@ bool TrackingSystem::update(const Ogre::PixelBox& frame)
 	if (!mInitialized)
 		return false;
 
-	//calc() method return the number of markers found
-	bool found = mTracker->calc((unsigned char*)frame.data) != 0;
+	//calc() method return the number of markers bFound
+	bool bFound = mTrackerMulti->calc((unsigned char*)frame.data) != 0;
 	
-	if (found)
+	if (bFound)
 	{		
 		convertPoseToOgreCoordinate();
-		mPoseComputed = true;
 	}
-	else
-		mPoseComputed = false;
 
-	return found;
+	mPoseComputed = bFound;
+	return bFound;
 }
 
 void TrackingSystem::convertPoseToOgreCoordinate() 
 {
-	const ARToolKitPlus::ARMultiMarkerInfoT* config = mTracker->getMultiMarkerConfig();	
-	Matrix4 invTrans = convert(config->trans).inverseAffine();
+	const ARToolKitPlus::ARMultiMarkerInfoT* config = mTrackerMulti->getMultiMarkerConfig();	
+	//Matrix4 invTrans = convert(config->trans).inverseAffine();
+	Matrix4 invTrans = convert(config->trans);
 
 	Vector3 invTransPosition = invTrans.getTrans();
 	Quaternion invTransOrientation = invTrans.extractQuaternion();	
@@ -110,8 +109,8 @@ const std::vector<int> TrackingSystem::getVisibleMarkersId() const
 	std::vector<int> ids;
 	
 	int* markersIds;
-	mTracker->getDetectedMarkers(markersIds);
-	for (int i=0; i<mTracker->getNumDetectedMarkers(); ++i)
+	mTrackerMulti->getDetectedMarkers(markersIds);
+	for (int i=0; i<mTrackerMulti->getNumDetectedMarkers(); ++i)
 		ids.push_back(markersIds[i]);
 
 	return ids;
@@ -120,7 +119,7 @@ const std::vector<int> TrackingSystem::getVisibleMarkersId() const
 const std::vector<Marker> TrackingSystem::getMarkersInfo() const
 {
 	std::vector<Marker> markers;
-	const ARToolKitPlus::ARMultiMarkerInfoT* config = mTracker->getMultiMarkerConfig();
+	const ARToolKitPlus::ARMultiMarkerInfoT* config = mTrackerMulti->getMultiMarkerConfig();
 	for (int i=0; i<config->marker_num; ++i)
 	{
 		int id = config->marker[i].patt_id;

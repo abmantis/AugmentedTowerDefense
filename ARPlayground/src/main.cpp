@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 
 #include "OgreApp.h"
-#include "OgreAppLogic.h"
+#include "AppLogic.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 	try 
 	{
 		OgreApp app;
-		OgreAppLogic appLogic;
+		AppLogic appLogic;
 		app.setAppLogic(&appLogic);
 		//app.setCommandLine(Ogre::String(strCmdLine));
 		app.run();

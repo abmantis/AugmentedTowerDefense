@@ -179,7 +179,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\src\AppLogic.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Chrono.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\DebugStuff.cpp"
 				>
 			</File>
 			<File
@@ -192,10 +200,6 @@
 			</File>
 			<File
 				RelativePath=".\src\OgreAppFrameListener.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\src\OgreAppLogic.cpp"
 				>
 			</File>
 			<File
@@ -229,7 +233,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\include\AppLogic.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\Chrono.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\DebugStuff.h"
 				>
 			</File>
 			<File
@@ -238,10 +250,6 @@
 			</File>
 			<File
 				RelativePath=".\include\OgreAppFrameListener.h"
-				>
-			</File>
-			<File
-				RelativePath=".\include\OgreAppLogic.h"
 				>
 			</File>
 			<File
