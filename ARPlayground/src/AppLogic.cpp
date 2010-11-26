@@ -80,11 +80,14 @@ bool AppLogic::update(Ogre::Real deltaTime)
 			mCameraNode->setOrientation(mTrackingSystem->getOrientation());
 			mCameraNode->setPosition(mTrackingSystem->getTranslation());
 		}
-		//else
-		//{
-		//	mObjectNode->setVisible(false);
-		//}
+		else
+		{
+			mObjectNode->setVisible(false);
+		}
 	}
+
+	DebugStuff::Print(mCameraNode->getPosition());
+
 	if (mAnimState)
 		mAnimState->addTime(deltaTime);
 
@@ -135,7 +138,7 @@ void AppLogic::createCamera(void)
 	mCamera->setNearClipDistance(0.5);
 	mCamera->setFarClipDistance(50000);
 	mCamera->setPosition(0, 0, 0);
-	mCamera->lookAt(0, 0, -1);
+	mCamera->lookAt(0, 0, 1);
 	mCamera->setFOVy(Degree(40)); //FOVy camera Ogre = 40°
 	mCamera->setAspectRatio((float) mViewport->getActualWidth() / (float) mViewport->getActualHeight());	
 	mViewport->setCamera(mCamera);
@@ -156,8 +159,8 @@ void AppLogic::createScene(void)
 	Ogre::Entity* ent = mSceneMgr->createEntity("Sinbad.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
 
 	mObjectNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cube");	
-//	mObjectNode->setOrientation(Quaternion(Degree(90.f), Vector3::UNIT_X));
-	mObjectNode->setPosition(0, 5*scale, 0);
+	mObjectNode->setOrientation(Quaternion(Degree(90.f), Vector3::UNIT_X));
+	mObjectNode->setPosition(0, 0, 5*scale);
 	mObjectNode->setScale(Ogre::Vector3::UNIT_SCALE*scale);
 	mObjectNode->attachObject(ent);
 
@@ -191,7 +194,7 @@ void AppLogic::initTracking(int width, int height)
 		technique->createPass();
 		material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
 		material->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
-	//	material->getTechnique(0)->getPass(0)->createTextureUnitState("WebcamTexture");
+		material->getTechnique(0)->getPass(0)->createTextureUnitState("WebcamTexture");
 	}
 	else
 	{

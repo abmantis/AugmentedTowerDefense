@@ -93,8 +93,10 @@ bool TrackingSystem::update(const Ogre::PixelBox& frame)
 void TrackingSystem::convertPoseToOgreCoordinate() 
 {
 	const ARToolKitPlus::ARMultiMarkerInfoT* config = mTrackerMulti->getMultiMarkerConfig();	
-	//Matrix4 invTrans = convert(config->trans).inverseAffine();
-	Matrix4 invTrans = convert(config->trans);
+	// Convert the AR matrix to an OGRE matrix and then compute the camera 
+	// position relative to the markers system 
+	Matrix4 invTrans = convert(config->trans).inverseAffine();
+	
 
 	Vector3 invTransPosition = invTrans.getTrans();
 	Quaternion invTransOrientation = invTrans.extractQuaternion();	

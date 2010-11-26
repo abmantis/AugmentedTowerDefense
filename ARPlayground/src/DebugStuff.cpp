@@ -23,21 +23,26 @@ void DebugStuff::CreateAxis( Ogre::SceneManager *sceneMgr )
 	myManualObject->begin("manual1Material", Ogre::RenderOperation::OT_LINE_LIST); 
 	myManualObject->position(0, 0, 0); 
 	myManualObject->colour(1,0,0);
-	myManualObject->position(10, 0, 0); 
+	myManualObject->position(100, 0, 0); 
 //	myManualObject->colour(1,0,0);
 
 	myManualObject->position(0, 0, 0); 
 	myManualObject->colour(0,1,0);
-	myManualObject->position(0, 10, 0);
+	myManualObject->position(0, 100, 0);
 //	myManualObject->colour(0,1,0);
 	
 	myManualObject->position(0, 0, 0); 
 	myManualObject->colour(0,0,1);
-	myManualObject->position(0, 0, 10); 
+	myManualObject->position(0, 0, 100); 
 //	myManualObject->colour(0,0,1);
 
 	myManualObject->end(); 
 
 	myManualObjectNode->attachObject(myManualObject);
 	myManualObjectNode->setPosition(0,0,0);
+}
+
+void DebugStuff::Print( Ogre::Vector3 vector3, std::string prefix /*= ""*/, std::string sufix /*= "\n"*/ )
+{
+	std::cout << prefix << vector3.x << ";" << vector3.y << ";" << vector3.z << sufix;
 }
