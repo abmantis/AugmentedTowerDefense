@@ -86,7 +86,7 @@ bool AppLogic::update(Ogre::Real deltaTime)
 		}
 	}
 
-	DebugStuff::Print(mCameraNode->getPosition());
+//	DebugStuff::Print(mCameraNode->getPosition());
 
 	if (mAnimState)
 		mAnimState->addTime(deltaTime);
@@ -179,26 +179,40 @@ void AppLogic::createScene(void)
 
 void AppLogic::initTracking(int width, int height)
 {
-	if (mVideoDeviceManager.size() > 0)
+	int iCameraCount = mVideoDeviceManager.size();
+	if (iCameraCount > 0)
 	{
-		mVideoDevice = mVideoDeviceManager[0];
-		mVideoDevice->init(width, height, 60);
-		mVideoDevice->createTexture("WebcamTexture");
-		mVideoDevice->showControlPanel();
-		mWebcamBufferL8 = new unsigned char[width*height];
-		mTrackingSystem->init(width, height);
+		for(int i = 0; i < iCameraCount; i++)
+		{
+			mVideoDevice = mVideoDeviceManager[i];
+			if(mVideoDevice->init(width, height, 60))
+			{
+				break;
+			}
+		}
+		if(mVideoDevice->IsWorking())
+		{
+			mVideoDevice->createTexture("WebcamTexture");
+			mVideoDevice->showControlPanel();
+			mWebcamBufferL8 = new unsigned char[width*height];
+			mTrackingSystem->init(width, height);
 
-		//Create Webcam Material
-		MaterialPtr material = MaterialManager::getSingleton().create("WebcamMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-		Ogre::Technique *technique = material->createTechnique();
-		technique->createPass();
-		material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
-		material->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
-		material->getTechnique(0)->getPass(0)->createTextureUnitState("WebcamTexture");
+			//Create Webcam Material
+			MaterialPtr material = MaterialManager::getSingleton().create("WebcamMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+			Ogre::Technique *technique = material->createTechnique();
+			technique->createPass();
+			material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
+			material->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
+			material->getTechnique(0)->getPass(0)->createTextureUnitState("WebcamTexture");	
+		}
+		else
+		{
+			throw Ogre::Exception(Ogre::Exception::ERR_INVALID_STATE, "Webcam not working", "AppLogic");
+		}
 	}
 	else
 	{
-		Ogre::Exception(Ogre::Exception::ERR_INVALID_STATE, "No webcam found", "AppLogic");
+		throw Ogre::Exception(Ogre::Exception::ERR_INVALID_STATE, "No webcam found", "AppLogic");
 	}
 }
 

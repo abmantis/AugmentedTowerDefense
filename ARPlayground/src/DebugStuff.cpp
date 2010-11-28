@@ -9,7 +9,7 @@ DebugStuff::~DebugStuff(void)
 {
 }
 
-void DebugStuff::CreateAxis( Ogre::SceneManager *sceneMgr )
+void DebugStuff::CreateLineAxis( Ogre::SceneManager *sceneMgr )
 {
 	Ogre::ManualObject* myManualObject =  sceneMgr->createManualObject("manual1"); 
 	Ogre::SceneNode* myManualObjectNode = sceneMgr->getRootSceneNode()->createChildSceneNode("manual1_node"); 
@@ -42,7 +42,19 @@ void DebugStuff::CreateAxis( Ogre::SceneManager *sceneMgr )
 	myManualObjectNode->setPosition(0,0,0);
 }
 
+void DebugStuff::CreateAxis( Ogre::SceneManager *sceneMgr )
+{
+	Ogre::Entity* ent = sceneMgr->createEntity("axes.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
+	Ogre::Real scale = 5;
+	Ogre::SceneNode* node = sceneMgr->getRootSceneNode()->createChildSceneNode("Axes");
+	node->setPosition(0, 0, 0);
+	node->setScale(Ogre::Vector3::UNIT_SCALE*scale);
+	node->attachObject(ent);
+}
+
 void DebugStuff::Print( Ogre::Vector3 vector3, std::string prefix /*= ""*/, std::string sufix /*= "\n"*/ )
 {
 	std::cout << prefix << vector3.x << ";" << vector3.y << ";" << vector3.z << sufix;
 }
+
+

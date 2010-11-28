@@ -28,16 +28,14 @@ VideoDevice::~VideoDevice()
 
 bool VideoDevice::init(int width, int height, int fps)
 {
-//	mManager->mVideoInput->setIdealFramerate(mIndex, fps);
+	//	mManager->mVideoInput->setIdealFramerate(mIndex, fps);
 	mManager->mVideoInput->setupDevice(mIndex, width, height);	
-
 	mWidth      = mManager->mVideoInput->getWidth(mIndex);
 	mHeight     = mManager->mVideoInput->getHeight(mIndex);
 	mBufferSize = mManager->mVideoInput->getSize(mIndex);
 
 	delete[] mBuffer;
 	mBuffer = new unsigned char[mBufferSize];
-
 	mPixelBox = Ogre::PixelBox(mWidth, mHeight, 1, Ogre::PF_B8G8R8, mBuffer);
 
 	mIsWorking = mManager->mVideoInput->isDeviceSetup(mIndex);

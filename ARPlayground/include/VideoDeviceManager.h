@@ -45,6 +45,7 @@ class VideoDevice
 		void* getBufferData() const;
 
 		void createTexture(const std::string name);
+		bool IsWorking() {return mIsWorking;}
 
 	protected:
 		VideoDevice(VideoDeviceManager* manager, int index);

@@ -35,34 +35,42 @@ OgreApp::~OgreApp()
 
 bool OgreApp::init(void)
 {
-	assert(!mInitialisationBegun);
-	mInitialisationBegun = true;
+	try
+	{
+		assert(!mInitialisationBegun);
+		mInitialisationBegun = true;
 
-	if(!mAppLogic)
+		if(!mAppLogic)
+			return false;
+
+		if(!mAppLogic->preInit(mCommandLineArgs))
+			return false;
+
+		mRoot = new Ogre::Root("plugins.cfg", "ogre.cfg", "Ogre.log");
+
+		if(!mRoot->restoreConfig() && !mRoot->showConfigDialog())
+			return false;
+
+		mWindow = mRoot->initialise(true);
+
+		createInputDevices(false);
+
+		setupResources();
+
+		// le frame listener prévient l'application de la taille de la fenetre
+		mFrameListener = new OgreAppFrameListener(this);
+		mRoot->addFrameListener(mFrameListener);
+
+		if(!mAppLogic->init())
+			return false;
+
+		mInitialisationComplete = true;		
+	}
+	catch (Ogre::Exception& e) 
+	{
+		MessageBox(NULL, e.getFullDescription().c_str(), "An exception has occured!", MB_OK | MB_ICONERROR | MB_TASKMODAL);
 		return false;
-
-	if(!mAppLogic->preInit(mCommandLineArgs))
-		return false;
-
-	mRoot = new Ogre::Root("plugins.cfg", "ogre.cfg", "Ogre.log");
-
-	if(!mRoot->restoreConfig() && !mRoot->showConfigDialog())
-		return false;
-
-	mWindow = mRoot->initialise(true);
-
-	createInputDevices(false);
-
-	setupResources();
-
-	// le frame listener prévient l'application de la taille de la fenetre
-	mFrameListener = new OgreAppFrameListener(this);
-	mRoot->addFrameListener(mFrameListener);
-
-	if(!mAppLogic->init())
-		return false;
-
-	mInitialisationComplete = true;
+	}	
 	return true;
 }
 
@@ -73,7 +81,7 @@ void OgreApp::run(void)
 	shutdown();
 }
 
-// Boucle de mise à jour de l'OgreApp, appellée par le frame listener
+
 bool OgreApp::update(Ogre::Real deltaTime)
 {
 	updateInputDevices();
