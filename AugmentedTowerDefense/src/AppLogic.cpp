@@ -79,6 +79,8 @@ bool AppLogic::update(Ogre::Real deltaTime)
 			mObjectNode->setVisible(true);
 			mCameraNode->setOrientation(mTrackingSystem->getOrientation());
 			mCameraNode->setPosition(mTrackingSystem->getTranslation());
+
+			mTrackingSystem->printMarkersInfo();
 		}
 		else
 		{
@@ -86,7 +88,7 @@ bool AppLogic::update(Ogre::Real deltaTime)
 		}
 	}
 
-//	DebugStuff::Print(mCameraNode->getPosition());
+//	HelperClass::Print(mCameraNode->getPosition());
 
 	if (mAnimState)
 		mAnimState->addTime(deltaTime);
@@ -169,12 +171,12 @@ void AppLogic::createScene(void)
 	Ogre::Entity* sword2 = mSceneMgr->createEntity("SinbadSword2", "Sword.mesh");
 	ent->attachObjectToBone("Sheath.L", sword1);
 	ent->attachObjectToBone("Sheath.R", sword2);
-	mAnimState = ent->getAnimationState("Dance");
-	mAnimState->setLoop(true);
-	mAnimState->setEnabled(true);
+	//mAnimState = ent->getAnimationState("Dance");
+	//mAnimState->setLoop(true);
+	//mAnimState->setEnabled(true);
 
 
-	DebugStuff::CreateAxis(mSceneMgr);
+	HelperClass::CreateAxis(mSceneMgr);
 }
 
 void AppLogic::initTracking(int width, int height)
@@ -193,7 +195,7 @@ void AppLogic::initTracking(int width, int height)
 		if(mVideoDevice->IsWorking())
 		{
 			mVideoDevice->createTexture("WebcamTexture");
-			mVideoDevice->showControlPanel();
+//			mVideoDevice->showControlPanel();
 			mWebcamBufferL8 = new unsigned char[width*height];
 			mTrackingSystem->init(width, height);
 

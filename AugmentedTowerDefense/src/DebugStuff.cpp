@@ -1,15 +1,15 @@
 #include "StdAfx.h"
 #include "DebugStuff.h"
 
-DebugStuff::DebugStuff(void)
+HelperClass::HelperClass(void)
 {
 }
 
-DebugStuff::~DebugStuff(void)
+HelperClass::~HelperClass(void)
 {
 }
 
-void DebugStuff::CreateLineAxis( Ogre::SceneManager *sceneMgr )
+void HelperClass::CreateLineAxis( Ogre::SceneManager *sceneMgr )
 {
 	Ogre::ManualObject* myManualObject =  sceneMgr->createManualObject("manual1"); 
 	Ogre::SceneNode* myManualObjectNode = sceneMgr->getRootSceneNode()->createChildSceneNode("manual1_node"); 
@@ -42,7 +42,7 @@ void DebugStuff::CreateLineAxis( Ogre::SceneManager *sceneMgr )
 	myManualObjectNode->setPosition(0,0,0);
 }
 
-void DebugStuff::CreateAxis( Ogre::SceneManager *sceneMgr )
+void HelperClass::CreateAxis( Ogre::SceneManager *sceneMgr )
 {
 	Ogre::Entity* ent = sceneMgr->createEntity("axes.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
 	Ogre::Real scale = 5;
@@ -52,9 +52,31 @@ void DebugStuff::CreateAxis( Ogre::SceneManager *sceneMgr )
 	node->attachObject(ent);
 }
 
-void DebugStuff::Print( Ogre::Vector3 vector3, std::string prefix /*= ""*/, std::string sufix /*= "\n"*/ )
+void HelperClass::Print( Ogre::Vector3 vector3, std::string prefix /*= ""*/, std::string sufix /*= "\n"*/ )
 {
 	std::cout << prefix << vector3.x << ";" << vector3.y << ";" << vector3.z << sufix;
+}
+
+void HelperClass::Print( Ogre::Matrix4 matrix4, std::string prefix /*= ""*/, std::string sufix /*= "\n"*/ )
+{
+	std::cout << prefix << std::endl;
+
+	for(int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			std::cout  << matrix4[i][j] << "\t";
+		}
+		std::cout << std::endl;
+	}
+	std::cout << sufix;
+}
+
+std::string HelperClass::ToString( int iVal )
+{
+	std::stringstream st;
+	st << iVal;
+	return st.str();
 }
 
 

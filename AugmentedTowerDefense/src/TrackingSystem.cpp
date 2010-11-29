@@ -3,6 +3,7 @@
 #include "TrackingSystem.h"
 
 #include "ARToolKitPlus/TrackerMultiMarkerImpl.h"
+#include "DebugStuff.h"
 
 
 using namespace std;
@@ -55,7 +56,7 @@ void TrackingSystem::init(int _width, int _height)
 	mTrackerMulti->setBorderWidth(0.125f);
 
     mTrackerMulti->setUndistortionMode(ARToolKitPlus::UNDIST_LUT);
-	mTrackerMulti->setMarkerMode(ARToolKitPlus::MARKER_ID_BCH);
+	mTrackerMulti->setMarkerMode(ARToolKitPlus::MARKER_ID_SIMPLE);
 	mTrackerMulti->changeCameraSize(_width, _height);
 
 	//Set image full res analysis on or off
@@ -130,6 +131,18 @@ const std::vector<Marker> TrackingSystem::getMarkersInfo() const
 	}
 
 	return markers;
+}
+
+void TrackingSystem::printMarkersInfo()
+{
+	std::cout << std::endl << std::endl;
+	const ARToolKitPlus::ARMultiMarkerInfoT* config = mTrackerMulti->getMultiMarkerConfig();
+	for (int i=0; i<config->marker_num; ++i)
+	{
+		int id = config->marker[i].patt_id;
+		Matrix4 trans = convert(config->marker[i].trans);
+		HelperClass::Print(trans, HelperClass::ToString(id));
+	}
 }
 
 Ogre::Matrix4 TrackingSystem::convert(const ARFloat _trans[3][4]) const
