@@ -1,8 +1,10 @@
 #ifndef APPLOGIC_H
 #define APPLOGIC_H
+#pragma once
 
 #include "VideoDeviceManager.h"
 #include "TrackingSystem.h"
+#include "SceneLoader.h"
 
 class OgreApp;
 class StatsFrameListener;
@@ -54,8 +56,8 @@ protected:
 	Ogre::SceneNode* mObjectNode;
 	VideoDeviceManager mVideoDeviceManager;
 	VideoDevice* mVideoDevice;
-	unsigned char* mWebcamBufferL8;
 	TrackingSystem* mTrackingSystem;
+	SceneLoader* mSceneLoader;
 	Ogre::AnimationState* mAnimState;
 
 	StatsFrameListener *mStatsFrameListener;

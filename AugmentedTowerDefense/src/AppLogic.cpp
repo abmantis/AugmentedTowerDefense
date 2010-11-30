@@ -1,10 +1,9 @@
 #include "StdAfx.h"
-#include "AppLogic.h"
 #include "OgreApp.h"
 #include "Chrono.h"
 #include "StatsFrameListener.h"
 #include "DebugStuff.h"
-
+#include "AppLogic.h"
 
 using namespace Ogre;
 
@@ -16,7 +15,6 @@ AppLogic::AppLogic() : mApplication(0)
 	mCamera         = 0;
 	mCameraNode     = 0;
 	mVideoDevice    = 0;
-	mWebcamBufferL8 = 0;
 	mObjectNode     = 0;
 	mTrackingSystem = 0;
 	mStatsFrameListener = 0;
@@ -41,6 +39,9 @@ bool AppLogic::init(void)
 	createViewport();
 	createCamera();
 	createScene();
+
+	mSceneLoader = new SceneLoader(mSceneMgr);
+	mSceneLoader->init();
 	
 	//webcam resolution
 	int width  = 320;
@@ -102,8 +103,8 @@ void AppLogic::shutdown(void)
 	mVideoDevice->shutdown();
 	mVideoDevice = NULL;
 
-	delete[] mWebcamBufferL8;
-	mWebcamBufferL8 = NULL;
+	if(mSceneLoader) delete mSceneLoader;
+	mSceneLoader = NULL;
 
 	delete mTrackingSystem;
 	mTrackingSystem = NULL;
@@ -196,7 +197,6 @@ void AppLogic::initTracking(int width, int height)
 		{
 			mVideoDevice->createTexture("WebcamTexture");
 //			mVideoDevice->showControlPanel();
-			mWebcamBufferL8 = new unsigned char[width*height];
 			mTrackingSystem->init(width, height);
 
 			//Create Webcam Material
