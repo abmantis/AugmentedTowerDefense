@@ -1,0 +1,29 @@
+
+material DefaultSettings
+{
+	technique
+	{
+		pass
+		{
+		}
+
+	}
+
+}
+
+material 1_Cladding_Stucco_White
+{
+	technique
+	{
+		pass
+		{
+
+			texture_unit
+			{
+				texture 1_Cladding_Stucco_White.jpg
+			}
+		}
+
+	}
+
+}

@@ -77,7 +77,7 @@ bool AppLogic::update(Ogre::Real deltaTime)
 		//Tracking using ArToolKitPlus
 		if (mTrackingSystem->update(box))
 		{
-			mObjectNode->setVisible(true);
+			//mObjectNode->setVisible(true);
 			mCameraNode->setOrientation(mTrackingSystem->getOrientation());
 			mCameraNode->setPosition(mTrackingSystem->getTranslation());
 
@@ -147,11 +147,12 @@ void AppLogic::createCamera(void)
 	mViewport->setCamera(mCamera);
 
 	mCameraNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cameraNode");
-	mCameraNode->setPosition(0, 0, 500);
+	mCameraNode->setPosition(0, 0, 20);
 	//mCameraNode->lookAt(Vector3(0, 1700, -1), Node::TS_WORLD);
 	mCameraNode->lookAt(Vector3(0, 0, 0), Node::TS_WORLD);
 	mCameraNode->attachObject(mCamera);
 	mCameraNode->setFixedYawAxis(true, Vector3::UNIT_Y);
+	mCameraNode->setOrientation(mCameraNode->getOrientation() * Ogre::Quaternion(Degree(180.f), Vector3::UNIT_Y));
 }
 
 void AppLogic::createScene(void)
@@ -172,9 +173,9 @@ void AppLogic::createScene(void)
 	Ogre::Entity* sword2 = mSceneMgr->createEntity("SinbadSword2", "Sword.mesh");
 	ent->attachObjectToBone("Sheath.L", sword1);
 	ent->attachObjectToBone("Sheath.R", sword2);
-	//mAnimState = ent->getAnimationState("Dance");
-	//mAnimState->setLoop(true);
-	//mAnimState->setEnabled(true);
+	mAnimState = ent->getAnimationState("Dance");
+	mAnimState->setLoop(true);
+	mAnimState->setEnabled(true);
 
 
 	HelperClass::CreateAxis(mSceneMgr);
