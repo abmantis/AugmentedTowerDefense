@@ -41,10 +41,11 @@ protected:
 	void createViewport(void);
 	void createCamera(void);
 	void createScene(void);
+	void setupLights();
 	
 	bool processInputs(Ogre::Real deltaTime);
 
-	void initTracking(int width, int height);
+	void initTracking(int &width, int &height);
 	void createWebcamPlane(int width, int height, Ogre::Real _distanceFromCamera);
 
 	// OGRE

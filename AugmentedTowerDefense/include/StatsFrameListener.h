@@ -11,6 +11,7 @@ public:
 	virtual bool frameEnded(const Ogre::FrameEvent& evt);
 
 	void showDebugOverlay(bool show);
+	void toogleDebugOverlay();
 	void setDebugText(const Ogre::String &debugText) { mDebugText = debugText; }
 
 protected:

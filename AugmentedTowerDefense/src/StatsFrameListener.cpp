@@ -9,7 +9,7 @@ StatsFrameListener::StatsFrameListener(RenderTarget *window)
 	mDebugText = "";
 	mDebugOverlay = OverlayManager::getSingleton().getByName("Core/DebugOverlay");
 	mIsAttached = false;
-	showDebugOverlay(true);
+//	showDebugOverlay(true);
 }
 
 
@@ -89,4 +89,13 @@ void StatsFrameListener::updateStats(void)
 		guiDbg->setCaption(mDebugText);
 	}
 	catch(...) { /* ignore */ }
+}
+
+void StatsFrameListener::toogleDebugOverlay()
+{
+	if(mDebugOverlay)	
+	{
+		bool bVisible = mDebugOverlay->isVisible();
+		showDebugOverlay(!bVisible);
+	}
 }

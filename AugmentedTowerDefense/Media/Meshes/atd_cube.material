@@ -1,16 +1,3 @@
-
-material DefaultSettings
-{
-	technique
-	{
-		pass
-		{
-		}
-
-	}
-
-}
-
 material 1_Cladding_Stucco_White
 {
 	technique

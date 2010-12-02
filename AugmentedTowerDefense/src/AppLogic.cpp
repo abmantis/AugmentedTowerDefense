@@ -38,16 +38,15 @@ bool AppLogic::init(void)
 	createSceneManager();
 	createViewport();
 	createCamera();
+	setupLights();
 	createScene();
 
 	mSceneLoader = new SceneLoader(mSceneMgr);
 	mSceneLoader->init();
 	
 	//webcam resolution
-	int width  = 320;
-	int height = 240;
-
-	mTrackingSystem = new TrackingSystem;
+	int width;
+	int height;
 
 	initTracking(width, height);
 	createWebcamPlane(width, height, 45000.0f);	
@@ -78,21 +77,21 @@ bool AppLogic::update(Ogre::Real deltaTime)
 		if (mTrackingSystem->update(box))
 		{
 			//mObjectNode->setVisible(true);
+			mSceneLoader->show();
 			mCameraNode->setOrientation(mTrackingSystem->getOrientation());
 			mCameraNode->setPosition(mTrackingSystem->getTranslation());
-
-			mTrackingSystem->printMarkersInfo();
 		}
 		else
 		{
-			mObjectNode->setVisible(false);
+			mSceneLoader->hide();
+			//mObjectNode->setVisible(false);
 		}
 	}
 
 //	HelperClass::Print(mCameraNode->getPosition());
 
-	if (mAnimState)
-		mAnimState->addTime(deltaTime);
+// 	if (mAnimState)
+// 		mAnimState->addTime(deltaTime);
 
 	bool result = processInputs(deltaTime);
 	return result;
@@ -101,21 +100,21 @@ bool AppLogic::update(Ogre::Real deltaTime)
 void AppLogic::shutdown(void)
 {
 	mVideoDevice->shutdown();
+//	if(mVideoDevice) delete mVideoDevice;
 	mVideoDevice = NULL;
 
 	if(mSceneLoader) delete mSceneLoader;
 	mSceneLoader = NULL;
 
-	delete mTrackingSystem;
+	if(mTrackingSystem) delete mTrackingSystem;
 	mTrackingSystem = NULL;
 
 	mApplication->getOgreRoot()->removeFrameListener(mStatsFrameListener);
-	delete mStatsFrameListener;
-	mStatsFrameListener = 0;
+	if(mStatsFrameListener) delete mStatsFrameListener;
+	mStatsFrameListener = NULL;
 	
-	if(mSceneMgr)
-		mApplication->getOgreRoot()->destroySceneManager(mSceneMgr);
-	mSceneMgr = 0;
+	if(mSceneMgr) mApplication->getOgreRoot()->destroySceneManager(mSceneMgr);
+	mSceneMgr = NULL;
 }
 
 void AppLogic::postShutdown(void)
@@ -142,12 +141,12 @@ void AppLogic::createCamera(void)
 	mCamera->setFarClipDistance(50000);
 	mCamera->setPosition(0, 0, 0);
 	mCamera->lookAt(0, 0, 1);
-	mCamera->setFOVy(Degree(40)); //FOVy camera Ogre = 40°
+	mCamera->setFOVy(Degree(26)); //FOVy camera Ogre = 40°
 	mCamera->setAspectRatio((float) mViewport->getActualWidth() / (float) mViewport->getActualHeight());	
 	mViewport->setCamera(mCamera);
 
 	mCameraNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cameraNode");
-	mCameraNode->setPosition(0, 0, 20);
+	mCameraNode->setPosition(0, 0, 100000);
 	//mCameraNode->lookAt(Vector3(0, 1700, -1), Node::TS_WORLD);
 	mCameraNode->lookAt(Vector3(0, 0, 0), Node::TS_WORLD);
 	mCameraNode->attachObject(mCamera);
@@ -159,29 +158,29 @@ void AppLogic::createScene(void)
 {
 	mSceneMgr->setSkyBox(true, "Examples/Grid");
 
-	Ogre::Real scale = 10;
-	Ogre::Entity* ent = mSceneMgr->createEntity("Sinbad.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
-
-	mObjectNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cube");	
-	mObjectNode->setOrientation(Quaternion(Degree(90.f), Vector3::UNIT_X));
-	mObjectNode->setPosition(0, 0, 5*scale);
-	mObjectNode->setScale(Ogre::Vector3::UNIT_SCALE*scale);
-	mObjectNode->attachObject(ent);
-
-	// create swords and attach them to sinbad
-	Ogre::Entity* sword1 = mSceneMgr->createEntity("SinbadSword1", "Sword.mesh");
-	Ogre::Entity* sword2 = mSceneMgr->createEntity("SinbadSword2", "Sword.mesh");
-	ent->attachObjectToBone("Sheath.L", sword1);
-	ent->attachObjectToBone("Sheath.R", sword2);
-	mAnimState = ent->getAnimationState("Dance");
-	mAnimState->setLoop(true);
-	mAnimState->setEnabled(true);
+// 	Ogre::Real scale = 10;
+// 	Ogre::Entity* ent = mSceneMgr->createEntity("Sinbad.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
+// 
+// 	mObjectNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cube");	
+// 	mObjectNode->setOrientation(Quaternion(Degree(90.f), Vector3::UNIT_X));
+// 	mObjectNode->setPosition(0, 0, 5*scale);
+// 	mObjectNode->setScale(Ogre::Vector3::UNIT_SCALE*scale);
+// 	mObjectNode->attachObject(ent);
+// 
+// 	// create swords and attach them to sinbad
+// 	Ogre::Entity* sword1 = mSceneMgr->createEntity("SinbadSword1", "Sword.mesh");
+// 	Ogre::Entity* sword2 = mSceneMgr->createEntity("SinbadSword2", "Sword.mesh");
+// 	ent->attachObjectToBone("Sheath.L", sword1);
+// 	ent->attachObjectToBone("Sheath.R", sword2);
+// 	mAnimState = ent->getAnimationState("Dance");
+// 	mAnimState->setLoop(true);
+// 	mAnimState->setEnabled(true);
 
 
 	HelperClass::CreateAxis(mSceneMgr);
 }
 
-void AppLogic::initTracking(int width, int height)
+void AppLogic::initTracking( int &width, int &height )
 {
 	int iCameraCount = mVideoDeviceManager.size();
 	if (iCameraCount > 0)
@@ -189,16 +188,18 @@ void AppLogic::initTracking(int width, int height)
 		for(int i = 0; i < iCameraCount; i++)
 		{
 			mVideoDevice = mVideoDeviceManager[i];
-			if(mVideoDevice->init(width, height, 60))
+			if(mVideoDevice->init())
 			{
 				break;
 			}
 		}
 		if(mVideoDevice->IsWorking())
 		{
-			mVideoDevice->createTexture("WebcamTexture");
 //			mVideoDevice->showControlPanel();
-			mTrackingSystem->init(width, height);
+			width = mVideoDevice->getWidth();
+			height = mVideoDevice->getHeight();
+
+			mVideoDevice->createTexture("WebcamTexture");
 
 			//Create Webcam Material
 			MaterialPtr material = MaterialManager::getSingleton().create("WebcamMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
@@ -207,6 +208,10 @@ void AppLogic::initTracking(int width, int height)
 			material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
 			material->getTechnique(0)->getPass(0)->setDepthWriteEnabled(false);
 			material->getTechnique(0)->getPass(0)->createTextureUnitState("WebcamTexture");	
+
+			// Init TrackingSystem
+			mTrackingSystem = new TrackingSystem();
+			mTrackingSystem->init(width, height);
 		}
 		else
 		{
@@ -258,6 +263,20 @@ bool AppLogic::processInputs(Ogre::Real deltaTime)
 	return true;
 }
 
+void AppLogic::setupLights()
+{
+	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.2f, 0.2f, 0.2f));
+	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+
+	Ogre::Light* pointLight = mSceneMgr->createLight("pointLight");
+	pointLight->setType(Ogre::Light::LT_POINT);	
+	pointLight->setDiffuseColour(1.0f, 1.0f, 1.0f);
+	pointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+//	mCameraNode->attachObject(pointLight);
+	pointLight->setPosition(Ogre::Vector3(0, 120, 250));
+//	pointLight->setDirection(1,-1,-1);
+}
+
 bool AppLogic::OISListener::mouseMoved( const OIS::MouseEvent &arg )
 {
 	return true;
@@ -283,6 +302,12 @@ bool AppLogic::OISListener::keyPressed( const OIS::KeyEvent &arg )
 		break;
 	case OIS::KC_DOWN:
 		pWebcamNode->translate(0,0,-500);
+		break;
+	case OIS::KC_F9:
+		mParent->mStatsFrameListener->toogleDebugOverlay();
+		break;
+	case OIS::KC_F10:
+		mParent->mSceneLoader->togleVisibility();
 		break;
 	}
 	return true;

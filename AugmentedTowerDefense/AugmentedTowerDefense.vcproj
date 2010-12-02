@@ -28,7 +28,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
-				CommandLine="$(ProjectDir)\bin\$(ConfigurationName)\$(ProjectName).exe&#x0D;&#x0A;"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -97,10 +97,10 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ProjectDir)bin\$(ConfigurationName)"
+			IntermediateDirectory="obj\$(ConfigurationName)"
 			ConfigurationType="1"
-			CharacterSet="1"
+			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -120,12 +120,14 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm135"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;D:\SDKs\OgreSDK_vc9_v1-7-2\include&quot;;D:\SDKs\ARToolKitPlus2.1.1\include;D:\SDKs\of_preRelease_v0.06_win32_VS2008\libs\videoInput\include;&quot;D:\SDKs\OgreSDK_vc9_v1-7-2\boost_1_44&quot;;&quot;D:\SDKs\OgreSDK_vc9_v1-7-2\include\OGRE&quot;;include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="2"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -140,9 +142,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="OgreMain.lib OIS.lib ARToolKitPlus.lib videoInput.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="D:\SDKs\ARToolKitPlus2.1.1\lib\Win32;D:\SDKs\of_preRelease_v0.06_win32_VS2008\libs\videoInput\lib;&quot;D:\SDKs\OgreSDK_vc9_v1-7-2\lib\release&quot;;&quot;D:\SDKs\OgreSDK_vc9_v1-7-2\boost_1_44\lib&quot;"
+				IgnoreDefaultLibraryNames="atlthunk.lib;msvcrtd.lib;libcmt.lib"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="0"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
@@ -205,13 +210,6 @@
 			<File
 				RelativePath=".\src\SceneLoader.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\StatsFrameListener.cpp"
@@ -222,6 +220,14 @@
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
 					>
 					<Tool
 						Name="VCCLCompilerTool"

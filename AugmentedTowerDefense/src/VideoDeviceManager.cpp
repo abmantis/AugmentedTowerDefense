@@ -28,8 +28,9 @@ VideoDevice::~VideoDevice()
 
 bool VideoDevice::init(int width, int height, int fps)
 {
+	mManager->mVideoInput->setVerbose(true);
 	//	mManager->mVideoInput->setIdealFramerate(mIndex, fps);
-	mManager->mVideoInput->setupDevice(mIndex, width, height);	
+	mManager->mVideoInput->setupDevice(mIndex);//, width, height);	
 	mWidth      = mManager->mVideoInput->getWidth(mIndex);
 	mHeight     = mManager->mVideoInput->getHeight(mIndex);
 	mBufferSize = mManager->mVideoInput->getSize(mIndex);

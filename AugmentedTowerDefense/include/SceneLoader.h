@@ -10,8 +10,13 @@ public:
 
 	bool init();
 
+	void show() { if(!mForceHide) mSceneRootNode->setVisible(true); }
+	void hide() { mSceneRootNode->setVisible(false); }
+	void togleVisibility();
+
 private:
 	void createWall(Ogre::Vector3 pos, Ogre::Real scale);
+	void createFloor(Ogre::Real width, Ogre::Real height);
 
 	Ogre::SceneManager* mSceneMgr;
 	Ogre::SceneNode* mSceneRootNode;
@@ -20,6 +25,7 @@ private:
 	int mCols;
 	int mWallCount;
 	Ogre::Real mWallCubeScale;
+	bool mForceHide;
 };
 
 #endif // SceneLoader_h__
