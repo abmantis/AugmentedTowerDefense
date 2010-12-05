@@ -1,5 +1,5 @@
-#ifndef DebugStuff_h__
-#define DebugStuff_h__
+#ifndef HelperClass_h__
+#define HelperClass_h__
 #pragma once
 
 class HelperClass
@@ -15,4 +15,4 @@ public:
 	static void Print(Ogre::Matrix4 matrix4, std::string prefix = "", std::string sufix = "\n");
 	static std::string ToString(int iVal);
 };
-#endif // DebugStuff_h__
+#endif // HelperClass__

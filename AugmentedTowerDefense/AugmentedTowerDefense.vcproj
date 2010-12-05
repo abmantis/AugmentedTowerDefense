@@ -192,7 +192,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\src\DebugStuff.cpp"
+				RelativePath=".\src\HelperClass.cpp"
 				>
 			</File>
 			<File
@@ -258,7 +258,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\include\DebugStuff.h"
+				RelativePath=".\include\HelperClass.h"
 				>
 			</File>
 			<File

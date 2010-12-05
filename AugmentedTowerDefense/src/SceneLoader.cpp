@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "SceneLoader.h"
-#include "DebugStuff.h"
+#include "HelperClass.h"
 
 SceneLoader::SceneLoader(Ogre::SceneManager* sceneMgr)
 {

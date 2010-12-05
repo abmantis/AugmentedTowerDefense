@@ -3,11 +3,8 @@
 #include "TrackingSystem.h"
 
 #include "ARToolKitPlus/TrackerMultiMarkerImpl.h"
-#include "DebugStuff.h"
+#include "HelperClass.h"
 
-
-using namespace std;
-using namespace Ogre;
 
 Marker::Marker()
 {
@@ -28,7 +25,7 @@ bool TrackingSystem::isUsingAutoThreshold       = true;
 int TrackingSystem::threshold                   = 140;
 
 TrackingSystem::TrackingSystem()
-: mRot180Z(Degree(180.f), Vector3::UNIT_Z)
+: mRot180Z(Ogre::Degree(180.f), Ogre::Vector3::UNIT_Z)
 {
 	mInitialized = false;
 	mMarkersFound = false;
@@ -96,11 +93,11 @@ void TrackingSystem::convertPoseToOgreCoordinate()
 	const ARToolKitPlus::ARMultiMarkerInfoT* config = mTrackerMulti->getMultiMarkerConfig();	
 	// Convert the AR matrix to an OGRE matrix and then compute the camera 
 	// position relative to the markers system 
-	Matrix4 invTrans = convert(config->trans).inverseAffine();
+	Ogre::Matrix4 invTrans = convert(config->trans).inverseAffine();
 	
 
-	Vector3 invTransPosition = invTrans.getTrans();
-	Quaternion invTransOrientation = invTrans.extractQuaternion();	
+	Ogre::Vector3 invTransPosition = invTrans.getTrans();
+	Ogre::Quaternion invTransOrientation = invTrans.extractQuaternion();	
 	invTransOrientation = invTransOrientation * mRot180Z;	
 		
 	mTranslation = invTransPosition;
@@ -126,7 +123,7 @@ const std::vector<Marker> TrackingSystem::getMarkersInfo() const
 	for (int i=0; i<config->marker_num; ++i)
 	{
 		int id = config->marker[i].patt_id;
-		Matrix4 trans = convert(config->marker[i].trans);
+		Ogre::Matrix4 trans = convert(config->marker[i].trans);
 		markers.push_back(Marker(trans, id));
 	}
 
@@ -140,7 +137,7 @@ void TrackingSystem::printMarkersInfo()
 	for (int i=0; i<config->marker_num; ++i)
 	{
 		int id = config->marker[i].patt_id;
-		Matrix4 trans = convert(config->marker[i].trans);
+		Ogre::Matrix4 trans = convert(config->marker[i].trans);
 		HelperClass::Print(trans, HelperClass::ToString(id));
 	}
 }

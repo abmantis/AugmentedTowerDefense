@@ -3,8 +3,6 @@
 #include "AppLogic.h"
 #include "OgreAppFrameListener.h"
 
-using namespace Ogre;
-
 OgreApp *Ogre::Singleton<class OgreApp>::ms_Singleton = 0;
 
 OgreApp::OgreApp()
@@ -131,14 +129,14 @@ void OgreApp::setAppLogic(AppLogic *appLogic)
 
 void OgreApp::setCommandLine(const Ogre::String &commandLine)
 {
-	String configFile;
+	Ogre::String configFile;
 	mCommandLine = commandLine;
 	
 	if(!commandLine.empty())
 	{
 
 		// splits command line in a vector without spliting text between quotes
-		StringVector quoteSplit = Ogre::StringUtil::split(commandLine, "\"");
+		Ogre::StringVector quoteSplit = Ogre::StringUtil::split(commandLine, "\"");
 
 		// if the first char was a quote, split() ignored it.
 		if(commandLine[0] == '\"')
@@ -154,7 +152,7 @@ void OgreApp::setCommandLine(const Ogre::String &commandLine)
 			}
 			else // even elements : outside quotes
 			{
-				StringVector spaceSplit = Ogre::StringUtil::split(quoteSplit[i]);
+				Ogre::StringVector spaceSplit = Ogre::StringUtil::split(quoteSplit[i]);
 				mCommandLineArgs.insert(mCommandLineArgs.end(), spaceSplit.begin(), spaceSplit.end());
 			}
 		}
@@ -185,27 +183,27 @@ void OgreApp::notifyWindowClosed(Ogre::RenderWindow* rw)
 void OgreApp::setupResources(void)
 {
 	// Load resource paths from config file
-	ConfigFile cf;
+	Ogre::ConfigFile cf;
 	cf.load("resources.cfg");
 
 	// Go through all sections & settings in the file
-	ConfigFile::SectionIterator seci = cf.getSectionIterator();
+	Ogre::ConfigFile::SectionIterator seci = cf.getSectionIterator();
 
-	String secName, typeName, archName;
+	Ogre::String secName, typeName, archName;
 	while (seci.hasMoreElements())
 	{
 		secName = seci.peekNextKey();
-		ConfigFile::SettingsMultiMap *settings = seci.getNext();
-		ConfigFile::SettingsMultiMap::const_iterator i;
+		Ogre::ConfigFile::SettingsMultiMap *settings = seci.getNext();
+		Ogre::ConfigFile::SettingsMultiMap::const_iterator i;
 		for (i = settings->begin(); i != settings->end(); ++i)
 		{
 			typeName = i->first;
 			archName = i->second;
-			ResourceGroupManager::getSingleton().addResourceLocation(
+			Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
 				archName, typeName, secName);
 		}
 	}
-	ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
 
 ////////////////////////////////////////////////
@@ -215,7 +213,7 @@ void OgreApp::createInputDevices(bool exclusive)
 	size_t winHandle = 0;
 
 	mWindow->getCustomAttribute("WINDOW", &winHandle);
-	pl.insert(std::make_pair("WINDOW", StringConverter::toString(winHandle)));
+	pl.insert(std::make_pair("WINDOW", Ogre::StringConverter::toString(winHandle)));
 
 	if(!exclusive)
 	{

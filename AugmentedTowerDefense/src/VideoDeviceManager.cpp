@@ -2,8 +2,6 @@
 #include "VideoDeviceManager.h"
 
 
-using namespace Ogre;
-
 /******* VIDEO DEVICE *******/
 
 VideoDevice::VideoDevice(VideoDeviceManager* manager, int index)
@@ -53,7 +51,7 @@ bool VideoDevice::update()
 		
 		if (!mTexture.isNull())
 		{
-			HardwarePixelBufferSharedPtr pixelBuffer = mTexture->getBuffer();
+			Ogre::HardwarePixelBufferSharedPtr pixelBuffer = mTexture->getBuffer();
 			pixelBuffer->blitFromMemory(mPixelBox);
 		}
 
@@ -102,15 +100,15 @@ void* VideoDevice::getBufferData() const
 
 void VideoDevice::createTexture(const std::string name)
 {
-	mTexture = TextureManager::getSingleton().createManual(
+	mTexture = Ogre::TextureManager::getSingleton().createManual(
 		name, 
-		ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
-		TEX_TYPE_2D, 
+		Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, 
+		Ogre::TEX_TYPE_2D, 
 		mWidth, 
 		mHeight, 
 		0,
-		PF_R8G8B8, 
-		TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+		Ogre::PF_R8G8B8, 
+		Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
 }
 
 /******* VIDEO DEVICE MANAGER *******/

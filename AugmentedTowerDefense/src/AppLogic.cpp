@@ -2,10 +2,8 @@
 #include "OgreApp.h"
 #include "Chrono.h"
 #include "StatsFrameListener.h"
-#include "DebugStuff.h"
+#include "HelperClass.h"
 #include "AppLogic.h"
-
-using namespace Ogre;
 
 AppLogic::AppLogic() : mApplication(0)
 {
@@ -45,7 +43,7 @@ bool AppLogic::init(void)
 	mSceneLoader->init();
 
 	std::vector<Ogre::Vector3> walkArray = mSceneLoader->getWalkVector();
-	for(int i = 1; i < walkArray.size(); i++)
+	for(Ogre::uint i = 1; i < walkArray.size(); i++)
 	{
 		HelperClass::CreateLine(mSceneMgr, walkArray[i-1], walkArray[i]);
 	}
@@ -132,7 +130,7 @@ void AppLogic::postShutdown(void)
 
 void AppLogic::createSceneManager(void)
 {
-	mSceneMgr = mApplication->getOgreRoot()->createSceneManager(ST_GENERIC, "SceneManager");
+	mSceneMgr = mApplication->getOgreRoot()->createSceneManager(Ogre::ST_GENERIC, "SceneManager");
 }
 
 void AppLogic::createViewport(void)
@@ -147,17 +145,17 @@ void AppLogic::createCamera(void)
 	mCamera->setFarClipDistance(50000);
 	mCamera->setPosition(0, 0, 0);
 	mCamera->lookAt(0, 0, 1);
-	mCamera->setFOVy(Degree(26)); //FOVy camera Ogre = 40°
+	mCamera->setFOVy(Ogre::Degree(26)); //FOVy camera Ogre = 40°
 	mCamera->setAspectRatio((float) mViewport->getActualWidth() / (float) mViewport->getActualHeight());	
 	mViewport->setCamera(mCamera);
 
 	mCameraNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cameraNode");
 	mCameraNode->setPosition(0, 0, 100000);
 	//mCameraNode->lookAt(Vector3(0, 1700, -1), Node::TS_WORLD);
-	mCameraNode->lookAt(Vector3(0, 0, 0), Node::TS_WORLD);
+	mCameraNode->lookAt(Ogre::Vector3(0, 0, 0), Ogre::Node::TS_WORLD);
 	mCameraNode->attachObject(mCamera);
-	mCameraNode->setFixedYawAxis(true, Vector3::UNIT_Y);
-	mCameraNode->setOrientation(mCameraNode->getOrientation() * Ogre::Quaternion(Degree(180.f), Vector3::UNIT_Y));
+	mCameraNode->setFixedYawAxis(true, Ogre::Vector3::UNIT_Y);
+	mCameraNode->setOrientation(mCameraNode->getOrientation() * Ogre::Quaternion(Ogre::Degree(180.f), Ogre::Vector3::UNIT_Y));
 }
 
 void AppLogic::createScene(void)
@@ -208,7 +206,7 @@ void AppLogic::initTracking( int &width, int &height )
 			mVideoDevice->createTexture("WebcamTexture");
 
 			//Create Webcam Material
-			MaterialPtr material = MaterialManager::getSingleton().create("WebcamMaterial", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+			Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().create("WebcamMaterial", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 			Ogre::Technique *technique = material->createTechnique();
 			technique->createPass();
 			material->getTechnique(0)->getPass(0)->setLightingEnabled(false);
@@ -235,21 +233,21 @@ void AppLogic::createWebcamPlane(int width, int height, Ogre::Real _distanceFrom
 	// Create a prefab plane dedicated to display video
 	float videoAspectRatio = width / (float) height;
 
-	float planeHeight = 2 * _distanceFromCamera * Ogre::Math::Tan(Degree(26)*0.5); //FOVy webcam = 26° (intrinsic param)
+	float planeHeight = 2 * _distanceFromCamera * Ogre::Math::Tan(Ogre::Degree(26)*0.5); //FOVy webcam = 26° (intrinsic param)
 	float planeWidth = planeHeight * videoAspectRatio;
 
-	Plane p(Vector3::UNIT_Z, 0.0);
-	MeshManager::getSingleton().createPlane("VerticalPlane", ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, p , planeWidth, planeHeight, 1, 1, true, 1, 1, 1, Vector3::UNIT_Y);
-	Entity* planeEntity = mSceneMgr->createEntity("VideoPlane", "VerticalPlane"); 
+	Ogre::Plane p(Ogre::Vector3::UNIT_Z, 0.0);
+	Ogre::MeshManager::getSingleton().createPlane("VerticalPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, p , planeWidth, planeHeight, 1, 1, true, 1, 1, 1, Ogre::Vector3::UNIT_Y);
+	Ogre::Entity* planeEntity = mSceneMgr->createEntity("VideoPlane", "VerticalPlane"); 
 	planeEntity->setMaterialName("WebcamMaterial");
-	planeEntity->setRenderQueueGroup(RENDER_QUEUE_WORLD_GEOMETRY_1);
+	planeEntity->setRenderQueueGroup(Ogre::RENDER_QUEUE_WORLD_GEOMETRY_1);
 
 	// Create a node for the plane, inserts it in the scene
 	Ogre::SceneNode* node = mCameraNode->createChildSceneNode("planeNode");
 	node->attachObject(planeEntity);
 
 	// Update position    
-	Vector3 planePos = mCamera->getPosition() + mCamera->getDirection() * _distanceFromCamera;
+	Ogre::Vector3 planePos = mCamera->getPosition() + mCamera->getDirection() * _distanceFromCamera;
 	node->setPosition(planePos);
 
 	// Update orientation

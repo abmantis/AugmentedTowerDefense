@@ -3,8 +3,6 @@
 #include "OgreAppFrameListener.h"
 
 
-using namespace Ogre;
-
 // Constructor takes a RenderWindow because it uses that to determine input context
 OgreAppFrameListener::OgreAppFrameListener(OgreApp* app) : mApplication(app)
 {
@@ -13,7 +11,7 @@ OgreAppFrameListener::OgreAppFrameListener(OgreApp* app) : mApplication(app)
 	if(window)
 	{
 		windowResized(window);
-		WindowEventUtilities::addWindowEventListener(window, this);
+		Ogre::WindowEventUtilities::addWindowEventListener(window, this);
 	}
 
 	mWindowClosed = false;
@@ -23,19 +21,19 @@ OgreAppFrameListener::~OgreAppFrameListener()
 {
 	Ogre::RenderWindow *window = mApplication->getRenderWindow();
 
-	WindowEventUtilities::removeWindowEventListener(window, this);
+	Ogre::WindowEventUtilities::removeWindowEventListener(window, this);
 	if(!window->isClosed())
 		windowClosed(window);
 }
 
 
 //Adjust mouse clipping area
-void OgreAppFrameListener::windowResized(RenderWindow* rw)
+void OgreAppFrameListener::windowResized(Ogre::RenderWindow* rw)
 {
 	windowMoved(rw);
 }
 
-void OgreAppFrameListener::windowMoved(RenderWindow* rw)
+void OgreAppFrameListener::windowMoved(Ogre::RenderWindow* rw)
 {
 	unsigned int width, height, depth;
 	int left, top;
@@ -44,7 +42,7 @@ void OgreAppFrameListener::windowMoved(RenderWindow* rw)
 }
 
 //Unattach OIS before window shutdown (very important under Linux)
-void OgreAppFrameListener::windowClosed(RenderWindow* rw)
+void OgreAppFrameListener::windowClosed(Ogre::RenderWindow* rw)
 {
 	mApplication->notifyWindowClosed(rw);
 	mWindowClosed = true;
@@ -52,7 +50,7 @@ void OgreAppFrameListener::windowClosed(RenderWindow* rw)
 
 // Override frameStarted event to process that (don't care about frameEnded)
 //bool OgreAppFrameListener::frameStarted(const FrameEvent& evt)
-bool OgreAppFrameListener::frameRenderingQueued(const FrameEvent& evt)
+bool OgreAppFrameListener::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
 	if(mWindowClosed)
 		return false;

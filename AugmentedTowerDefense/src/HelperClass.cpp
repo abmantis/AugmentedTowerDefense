@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "DebugStuff.h"
+#include "HelperClass.h"
 
 HelperClass::HelperClass(void)
 {
