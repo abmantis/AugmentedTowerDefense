@@ -79,4 +79,24 @@ std::string HelperClass::ToString( int iVal )
 	return st.str();
 }
 
+void HelperClass::CreateLine( Ogre::SceneManager *sceneMgr, Ogre::Vector3 start, Ogre::Vector3 end )
+{
+	Ogre::ManualObject* myManualObject =  sceneMgr->createManualObject(); 
+	Ogre::SceneNode* myManualObjectNode = sceneMgr->getRootSceneNode()->createChildSceneNode(); 
+
+	Ogre::MaterialPtr myManualObjectMaterial = Ogre::MaterialManager::getSingleton().create("manual1Material", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME); 
+	myManualObjectMaterial->setReceiveShadows(false); 
+	myManualObjectMaterial->getTechnique(0)->setLightingEnabled(false); 
+
+
+
+	myManualObject->begin("manual1Material", Ogre::RenderOperation::OT_LINE_LIST); 
+	myManualObject->position(start); 
+	myManualObject->position(end); 
+	myManualObject->end(); 
+
+	myManualObjectNode->attachObject(myManualObject);
+	myManualObjectNode->setPosition(0,0,0);
+}
+
 

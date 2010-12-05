@@ -43,6 +43,12 @@ bool AppLogic::init(void)
 
 	mSceneLoader = new SceneLoader(mSceneMgr);
 	mSceneLoader->init();
+
+	std::vector<Ogre::Vector3> walkArray = mSceneLoader->getWalkVector();
+	for(int i = 1; i < walkArray.size(); i++)
+	{
+		HelperClass::CreateLine(mSceneMgr, walkArray[i-1], walkArray[i]);
+	}
 	
 	//webcam resolution
 	int width;
@@ -265,16 +271,24 @@ bool AppLogic::processInputs(Ogre::Real deltaTime)
 
 void AppLogic::setupLights()
 {
-	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.2f, 0.2f, 0.2f));
+	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.3f, 0.3f, 0.3f));
+// 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.0f, 0.0f, 0.0f));
 	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
 
-	Ogre::Light* pointLight = mSceneMgr->createLight("pointLight");
-	pointLight->setType(Ogre::Light::LT_POINT);	
-	pointLight->setDiffuseColour(1.0f, 1.0f, 1.0f);
-	pointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
-//	mCameraNode->attachObject(pointLight);
-	pointLight->setPosition(Ogre::Vector3(0, 120, 250));
-//	pointLight->setDirection(1,-1,-1);
+// 	Ogre::Light* pointLight = mSceneMgr->createLight("pointLight");
+// 	pointLight->setType(Ogre::Light::LT_POINT);	
+// 	pointLight->setDiffuseColour(0.7f, 0.7f, 0.7f);
+// 	pointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+// 	pointLight->setPosition(Ogre::Vector3(0, 100, 130));
+
+	Ogre::Light* dirLight = mSceneMgr->createLight("dirLight");
+	dirLight->setType(Ogre::Light::LT_DIRECTIONAL);	
+// 	dirLight->setDiffuseColour(0.4f, 0.4f, 0.4f);
+// 	dirLight->setSpecularColour(0.5f, 0.5f, 0.5f);
+	dirLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
+	dirLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+	dirLight->setDirection(Ogre::Vector3(-0.2f, -0.5f, -1));
+
 }
 
 bool AppLogic::OISListener::mouseMoved( const OIS::MouseEvent &arg )
