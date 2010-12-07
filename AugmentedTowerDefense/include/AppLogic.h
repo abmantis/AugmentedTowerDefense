@@ -5,6 +5,7 @@
 #include "VideoDeviceManager.h"
 #include "TrackingSystem.h"
 #include "SceneLoader.h"
+#include "EnemyManager.h"
 
 class OgreApp;
 class StatsFrameListener;
@@ -59,6 +60,7 @@ protected:
 	VideoDevice* mVideoDevice;
 	TrackingSystem* mTrackingSystem;
 	SceneLoader* mSceneLoader;
+	EnemyManager* mEnemyMgr;
 	Ogre::AnimationState* mAnimState;
 
 	StatsFrameListener *mStatsFrameListener;

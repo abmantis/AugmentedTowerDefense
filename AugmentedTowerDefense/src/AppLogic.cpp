@@ -5,18 +5,21 @@
 #include "HelperClass.h"
 #include "AppLogic.h"
 
-AppLogic::AppLogic() : mApplication(0)
+
+AppLogic::AppLogic() : mApplication(NULL)
 {
 	// ogre
-	mSceneMgr		= 0;
-	mViewport		= 0;
-	mCamera         = 0;
-	mCameraNode     = 0;
-	mVideoDevice    = 0;
-	mObjectNode     = 0;
-	mTrackingSystem = 0;
-	mStatsFrameListener = 0;
-	mAnimState = 0;
+	mSceneMgr		= NULL;
+	mViewport		= NULL;
+	mCamera         = NULL;
+	mCameraNode     = NULL;
+	mVideoDevice    = NULL;
+	mObjectNode     = NULL;
+	mTrackingSystem = NULL;
+	mStatsFrameListener = NULL;
+	mAnimState = NULL;
+	mSceneLoader = NULL;
+	mEnemyMgr = NULL;
 
 	mOISListener.mParent = this;
 }
@@ -47,6 +50,10 @@ bool AppLogic::init(void)
 	{
 		HelperClass::CreateLine(mSceneMgr, walkArray[i-1], walkArray[i]);
 	}
+	
+	mEnemyMgr = new EnemyManager(mSceneMgr);
+	mEnemyMgr->init(walkArray);
+	
 	
 	//webcam resolution
 	int width;
@@ -91,6 +98,8 @@ bool AppLogic::update(Ogre::Real deltaTime)
 			//mObjectNode->setVisible(false);
 		}
 	}
+
+	mEnemyMgr->update(deltaTime);
 
 //	HelperClass::Print(mCameraNode->getPosition());
 
