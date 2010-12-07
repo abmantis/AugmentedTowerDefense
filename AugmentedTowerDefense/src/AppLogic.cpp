@@ -46,10 +46,10 @@ bool AppLogic::init(void)
 	mSceneLoader->init();
 
 	std::vector<Ogre::Vector3> walkArray = mSceneLoader->getWalkVector();
-	for(Ogre::uint i = 1; i < walkArray.size(); i++)
-	{
-		HelperClass::CreateLine(mSceneMgr, walkArray[i-1], walkArray[i]);
-	}
+	//for(Ogre::uint i = 1; i < walkArray.size(); i++)
+	//{
+	//	HelperClass::CreateLine(mSceneMgr, walkArray[i-1], walkArray[i]);
+	//}
 	
 	mEnemyMgr = new EnemyManager(mSceneMgr);
 	mEnemyMgr->init(walkArray);
@@ -151,7 +151,7 @@ void AppLogic::createCamera(void)
 {
 	mCamera = mSceneMgr->createCamera("camera");
 	mCamera->setNearClipDistance(0.5);
-	mCamera->setFarClipDistance(50000);
+	mCamera->setFarClipDistance(10000);
 	mCamera->setPosition(0, 0, 0);
 	mCamera->lookAt(0, 0, 1);
 	mCamera->setFOVy(Ogre::Degree(26)); //FOVy camera Ogre = 40°
@@ -159,12 +159,12 @@ void AppLogic::createCamera(void)
 	mViewport->setCamera(mCamera);
 
 	mCameraNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cameraNode");
-	mCameraNode->setPosition(0, 0, 100000);
-	//mCameraNode->lookAt(Vector3(0, 1700, -1), Node::TS_WORLD);
-	mCameraNode->lookAt(Ogre::Vector3(0, 0, 0), Ogre::Node::TS_WORLD);
+	mCameraNode->setPosition(0, 0, 50000);
+	//mCameraNode->lookAt(Ogre::Vector3(0, 0, 0), Ogre::Node::TS_WORLD);
 	mCameraNode->attachObject(mCamera);
 	mCameraNode->setFixedYawAxis(true, Ogre::Vector3::UNIT_Y);
-	mCameraNode->setOrientation(mCameraNode->getOrientation() * Ogre::Quaternion(Ogre::Degree(180.f), Ogre::Vector3::UNIT_Y));
+	//mCameraNode->setOrientation(mCameraNode->getOrientation() * Ogre::Quaternion(Ogre::Degree(180.f), Ogre::Vector3::UNIT_Y));
+	mCameraNode->setDirection(0,0,1, Ogre::SceneNode::TS_WORLD);
 }
 
 void AppLogic::createScene(void)
@@ -261,6 +261,7 @@ void AppLogic::createWebcamPlane(int width, int height, Ogre::Real _distanceFrom
 
 	// Update orientation
 	node->setOrientation(mCamera->getOrientation());
+
 }
 
 //--------------------------------- update --------------------------------
@@ -315,20 +316,25 @@ bool AppLogic::OISListener::mouseReleased( const OIS::MouseEvent &arg, OIS::Mous
 
 bool AppLogic::OISListener::keyPressed( const OIS::KeyEvent &arg )
 {
-	Ogre::SceneNode *pWebcamNode = static_cast<Ogre::SceneNode*>(mParent->mCameraNode->getChild("planeNode"));
 	switch (arg.key)
 	{
 	case OIS::KC_UP:
-		pWebcamNode->translate(0,0,500);
+		mParent->mCameraNode->yaw(Ogre::Degree(15));
 		break;
 	case OIS::KC_DOWN:
-		pWebcamNode->translate(0,0,-500);
+		mParent->mCameraNode->pitch(Ogre::Degree(15));
 		break;
 	case OIS::KC_F9:
 		mParent->mStatsFrameListener->toogleDebugOverlay();
 		break;
 	case OIS::KC_F10:
 		mParent->mSceneLoader->togleVisibility();
+		break;
+	case OIS::KC_F11:
+		//mParent->mCameraNode->setPosition(50,0,560);
+		//mParent->mCameraNode->setDirection(0,0,1);
+		//mParent->mSceneLoader->togleVisibility();
+		mParent->mTrackingSystem->mSimulate = !mParent->mTrackingSystem->mSimulate;
 		break;
 	}
 	return true;

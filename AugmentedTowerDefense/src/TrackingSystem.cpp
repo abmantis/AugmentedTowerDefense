@@ -29,6 +29,7 @@ TrackingSystem::TrackingSystem()
 {
 	mInitialized = false;
 	mMarkersFound = false;
+	mSimulate = false;
 
 	mTrackerMulti = NULL;
 }
@@ -76,6 +77,12 @@ bool TrackingSystem::update(const Ogre::PixelBox& frame)
 	if (!mInitialized)
 		return false;
 
+	if(mSimulate)
+	{
+		Simulate();
+		return true; 
+	}
+
 	//calc() method return the number of markers bFound
 	bool bFound = mTrackerMulti->calc((unsigned char*)frame.data) != 0;
 	
@@ -100,7 +107,7 @@ void TrackingSystem::convertPoseToOgreCoordinate()
 	Ogre::Quaternion invTransOrientation = invTrans.extractQuaternion();	
 	invTransOrientation = invTransOrientation * mRot180Z;	
 		
-	mTranslation = invTransPosition;
+	mPosition = invTransPosition;
 	mOrientation = invTransOrientation;	
 }
 
@@ -156,7 +163,7 @@ Ogre::Matrix4 TrackingSystem::convert(const ARFloat _trans[3][4]) const
 
 Ogre::Vector3 TrackingSystem::getTranslation() const
 {
-	return mTranslation;
+	return mPosition;
 }
 
 Ogre::Quaternion TrackingSystem::getOrientation() const
@@ -167,4 +174,20 @@ Ogre::Quaternion TrackingSystem::getOrientation() const
 bool TrackingSystem::isPoseComputed() const
 {
 	return mPoseComputed;
+}
+
+void TrackingSystem::Simulate()
+{
+	mPosition = Ogre::Vector3(50,-100,260);
+	//mOrientation = Ogre::Vector3::UNIT_X.getRotationTo(Ogre::Vector3(0,0,1));
+	//mOrientation = mOrientation * mRot180Z;
+
+	Ogre::Vector3 dir = mPosition - Ogre::Vector3(0,0,1);
+	dir.normalise();
+	Ogre::Vector3 right(dir.z,0,-dir.x);
+	right.normalise();
+	Ogre::Vector3 up = dir.crossProduct(right);
+	mOrientation = Ogre::Quaternion(right,up,dir);
+	mOrientation = mOrientation * Ogre::Quaternion(Ogre::Degree(180.f), Ogre::Vector3::UNIT_Y);
+	mPoseComputed = true;
 }

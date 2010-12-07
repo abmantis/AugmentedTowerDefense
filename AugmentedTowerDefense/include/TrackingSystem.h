@@ -39,17 +39,22 @@ class TrackingSystem
 		static bool isUsingAutoThreshold;
 		static int threshold;
 
+
+		bool mSimulate;
+
 	protected:		
 
 		void convertPoseToOgreCoordinate();		
 		Ogre::Matrix4 convert(const ARFloat _trans[3][4]) const;
-		Ogre::Quaternion mRot180Z;
-					
+		void Simulate();
+
+		Ogre::Quaternion mRot180Z;					
 		ARToolKitPlus::TrackerMultiMarker *mTrackerMulti;
 		bool mMarkersFound;
 		bool mInitialized;
+		
 
-		Ogre::Vector3     mTranslation;
+		Ogre::Vector3     mPosition;
 		Ogre::Quaternion  mOrientation;
 		bool              mPoseComputed;
 };
