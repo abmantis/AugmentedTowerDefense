@@ -99,4 +99,31 @@ void HelperClass::CreateLine( Ogre::SceneManager *sceneMgr, Ogre::Vector3 start,
 	myManualObjectNode->setPosition(0,0,0);
 }
 
+void HelperClass::DestroyAllAttachedMovableObjects( Ogre::SceneNode* pNode )
+{
+	if ( pNode == NULL)
+	{
+		assert( pNode != NULL );
+		return;
+	}
+
+	// Destroy all the attached objects
+	Ogre::SceneNode::ObjectIterator itObject = pNode->getAttachedObjectIterator();
+
+	while ( itObject.hasMoreElements() )
+	{
+		Ogre::MovableObject* pObject = static_cast<Ogre::MovableObject*>(itObject.getNext());
+		pNode->getCreator()->destroyMovableObject( pObject );
+	}
+
+	// Recurse to child SceneNodes
+	Ogre::SceneNode::ChildNodeIterator itChild = pNode->getChildIterator();
+
+	while ( itChild.hasMoreElements() )
+	{
+		Ogre::SceneNode* pChildNode = static_cast<Ogre::SceneNode*>(itChild.getNext());
+		DestroyAllAttachedMovableObjects( pChildNode );
+	}
+}
+
 
