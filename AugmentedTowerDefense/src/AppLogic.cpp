@@ -262,6 +262,8 @@ void AppLogic::createWebcamPlane(int width, int height, Ogre::Real _distanceFrom
 	// Update orientation
 	node->setOrientation(mCamera->getOrientation());
 
+	planeEntity->setVisible(false);
+
 }
 
 //--------------------------------- update --------------------------------

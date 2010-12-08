@@ -1,19 +1,28 @@
 #include "StdAfx.h"
 #include "EnemyManager.h"
+#include "HelperClass.h"
 
 Enemy::Enemy( Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath )
+:mSceneMgr(sceneMgr), mWalkPath(walkPath)
 {
-	mWalkPath = walkPath;
 	mWalkToPos = 0;
-	mSpeed = 15;
-
-	Ogre::Entity *ent = sceneMgr->createEntity("atd_cube.mesh");
-	mNode = sceneMgr->getRootSceneNode()->createChildSceneNode();
-	mNode->attachObject(ent);
+	mSpeed = 25;
+	
+	mEntity = mSceneMgr->createEntity("atd_cube.mesh");
+	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	mNode->attachObject(mEntity);
 	mNode->setScale(6,6,6);
 	mNode->setPosition((*mWalkPath)[0]);
 //	mNode->setDirection((*mWalkPath)[1], Ogre::SceneNode::TS_LOCAL, Ogre::Vector3::UNIT_Y);
 	nextLocation();
+	mState = BORNING;
+}
+
+Enemy::~Enemy()
+{
+	HelperClass::DestroyAllAttachedMovableObjects(mNode);
+	mNode->removeAndDestroyAllChildren();
+	mSceneMgr->destroySceneNode(mNode);
 }
 
 void Enemy::update( Ogre::Real deltaTime )
@@ -25,20 +34,18 @@ void Enemy::update( Ogre::Real deltaTime )
 	{                 
 		mNode->setPosition(mDestination);
 		mDirection = Ogre::Vector3::ZERO;				
-		// Set animation based on if the robot has another point to walk to. 
+
 		if (!nextLocation())
 		{
-// 			// Set Idle animation                     
-// 			mAnimationState = mEntity->getAnimationState("Idle");
-// 			mAnimationState->setLoop(true);
-// 			mAnimationState->setEnabled(true);
+			mState = VICTORIOUS;
+
 		}
 		else
 		{
 			Ogre::Vector3 src = mNode->getOrientation() * Ogre::Vector3::UNIT_X;
 			if ((1.0f + src.dotProduct(mDirection)) < 0.0001f) 
 			{
-				mNode->yaw(Ogre::Degree(180));						
+				mNode->yaw(Ogre::Degree(180));
 			}
 			else
 			{
@@ -51,11 +58,6 @@ void Enemy::update( Ogre::Real deltaTime )
 	{
 		mNode->translate(mDirection * move);
 	} 
-
-// 
-// 	mNode->setDirection(vecToGo, Ogre::SceneNode::TS_WORLD, Ogre::Vector3::UNIT_Y);
-// 	mNode->translate(Ogre::Vector3(0, mSpeed*deltaTime, 0), Ogre::SceneNode::TS_LOCAL);
-	
 }
 
 bool Enemy::nextLocation(void){
@@ -71,10 +73,14 @@ bool Enemy::nextLocation(void){
 }
 
 
+
 EnemyManager::EnemyManager( Ogre::SceneManager *sceneMgr )
 {
 	mSceneMgr = sceneMgr;
 	mTimeSinceLastWave = 0;	
+	mTimeSinceLastEnemyBorn = 0;
+	mVisible = false;
+	mEnemiesBorn = 0;
 }
 
 EnemyManager::~EnemyManager(void)
@@ -84,26 +90,86 @@ EnemyManager::~EnemyManager(void)
 void EnemyManager::init( std::vector<Ogre::Vector3> walkPath )
 {
 	mWalkPath = walkPath;
-	pEnemy = NULL;
 }
 
 void EnemyManager::update( Ogre::Real deltaTime )
 {
-	if(mTimeSinceLastWave < 3.0f)
+	if(mTimeSinceLastWave < 5.0f)
 	{
 		mTimeSinceLastWave += deltaTime;
 	}
 	else
 	{
-		if(pEnemy)
+		EnemyArray::iterator it;
+		EnemyArray::iterator itBegin = mEnemyArray.begin();
+		EnemyArray::iterator itEnd = mEnemyArray.end();
+
+		if(itBegin != itEnd)
 		{
-			pEnemy->update(deltaTime);
+			// Update and delete enemies
+			std::queue<EnemyArray::iterator> itersToDelete;
+			for(it = itBegin; it != itEnd; it++)
+			{
+				Enemy* pEnemy = (*it);
+				pEnemy->update(deltaTime);
+
+				switch (pEnemy->getState())
+				{
+				case Enemy::VICTORIOUS:
+				case Enemy::DEFEATED:
+					delete pEnemy;
+					pEnemy = NULL;
+					itersToDelete.push(it);	// add iterator to delete list. it will be deleted later
+					break;
+				case Enemy::BORNING:
+				case Enemy::ALIVE:					
+					break;
+				}
+			}
+
+			// delete enemies
+			while(!itersToDelete.empty())
+			{
+				mEnemyArray.erase(itersToDelete.front());
+				itersToDelete.pop();
+			}
 		}
-		else
+		else // The array is empty
+		{   
+			if(mEnemiesBorn >= 5)
+			{
+				// The array is empty and all enemies have already born? Start next round!
+				mTimeSinceLastWave = 0;
+				mEnemiesBorn = 0;
+				mTimeSinceLastEnemyBorn = 1.1f;
+				return;
+			}
+		}
+
+		mTimeSinceLastEnemyBorn += deltaTime;
+		if(mTimeSinceLastEnemyBorn > 1.0f && mEnemiesBorn < 5)
 		{
-			pEnemy = new Enemy(mSceneMgr, &mWalkPath);
-		}
+			createEnemy();
+		}		
 	}	
 
 }
+
+void EnemyManager::createEnemy()
+{
+	mEnemyArray.push_back(new Enemy(mSceneMgr, &mWalkPath));
+	mEnemiesBorn++;
+	mTimeSinceLastEnemyBorn = 0;
+}
+
+void EnemyManager::setVisible( bool visible )
+{
+	mVisible = visible;
+	std::list<Enemy*>::iterator it;
+	for(it=mEnemyArray.begin(); it != mEnemyArray.end(); it++)
+	{
+		(*it)->setVisible(visible);
+	}
+}
+
 
