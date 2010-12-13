@@ -25,6 +25,7 @@ private:
 	Ogre::Real mDistance;                  // The distance the object has left to travel
 	Ogre::Vector3 mDirection;              // The direction the object is moving
 	Ogre::Vector3 mDestination;            // The destination the object is moving towards
+	Ogre::Real mScale;
 	EnemyState mState;
 };
 

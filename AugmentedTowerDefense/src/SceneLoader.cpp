@@ -133,16 +133,16 @@ void SceneLoader::togleVisibility()
 
 void SceneLoader::createWalkArray()
 {	
-	Ogre::Real zPos = mWallCubeScale*0.5f;
+	Ogre::Real zPos = 0; //mWallCubeScale*0.5f;
 	Ogre::Vector2 curPos, lastPos, nextPos;
 	lastPos = curPos = mStartPos;
 
-	mWalkVector.push_back(matrixCoordToSceneCoord(curPos));
+	mWalkVector.push_back(matrixCoordToSceneCoord(curPos, zPos));
 	while(findNextPos(curPos, lastPos, nextPos))
 	{
 		lastPos = curPos;
 		curPos = nextPos;
-		mWalkVector.push_back(matrixCoordToSceneCoord(curPos));
+		mWalkVector.push_back(matrixCoordToSceneCoord(curPos, zPos));
 	}
 }
 
@@ -238,4 +238,11 @@ Ogre::Vector3 SceneLoader::matrixCoordToSceneCoord( Ogre::Vector2 matrixCoord )
 	scenecoord.y += matrixCoord.y;
 	
 	return scenecoord;
+}
+
+Ogre::Vector3 SceneLoader::matrixCoordToSceneCoord( Ogre::Vector2 matrixCoord, Ogre::Real zPos )
+{
+	Ogre::Vector3 vec = matrixCoordToSceneCoord(matrixCoord);
+	vec.z = zPos;
+	return vec;
 }

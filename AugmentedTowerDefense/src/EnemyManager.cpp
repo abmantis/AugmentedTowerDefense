@@ -7,13 +7,15 @@ Enemy::Enemy( Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath
 {
 	mWalkToPos = 0;
 	mSpeed = 25;
+	mScale = 6;
 	
 	mEntity = mSceneMgr->createEntity("atd_cube.mesh");
 	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 	mNode->attachObject(mEntity);
-	mNode->setScale(6,6,6);
-	mNode->setPosition((*mWalkPath)[0]);
-//	mNode->setDirection((*mWalkPath)[1], Ogre::SceneNode::TS_LOCAL, Ogre::Vector3::UNIT_Y);
+	mNode->setScale(mScale, mScale, mScale);
+	Ogre::Vector3 posi = (*mWalkPath)[0];
+	posi.z = mEntity->getBoundingBox().getSize().z * mScale * 0.5f;
+	mNode->setPosition(posi);
 	nextLocation();
 	mState = BORNING;
 }
@@ -42,28 +44,33 @@ void Enemy::update( Ogre::Real deltaTime )
 		}
 		else
 		{
-			Ogre::Vector3 src = mNode->getOrientation() * Ogre::Vector3::UNIT_X;
-			if ((1.0f + src.dotProduct(mDirection)) < 0.0001f) 
-			{
-				mNode->yaw(Ogre::Degree(180));
-			}
-			else
-			{
-				Ogre::Quaternion quat = src.getRotationTo(mDirection);
-				mNode->rotate(quat);
-			}
+// 			Ogre::Vector3 src = mNode->getOrientation() * Ogre::Vector3::UNIT_X;
+// 			if ((1.0f + src.dotProduct(mDirection)) < 0.0001f) 
+// 			{
+// 				mNode->yaw(Ogre::Degree(180));
+// 			}
+// 			else
+// 			{
+// 				Ogre::Quaternion quat = src.getRotationTo(mDirection);
+// 				mNode->rotate(quat);
+// 			}
 		}
 	}
 	else
 	{
 		mNode->translate(mDirection * move);
 	} 
+
+//	mNode->yaw(Ogre::Degree(deltaTime * 200));
+	mNode->roll(Ogre::Degree(deltaTime * 400));
+//	mNode->pitch(Ogre::Degree(deltaTime * 500));
 }
 
 bool Enemy::nextLocation(void){
 	if (mWalkPath->size() == mWalkToPos) return false;
 
 	mDestination = (*mWalkPath)[mWalkToPos];
+	mDestination.z = mEntity->getBoundingBox().getSize().z * mScale * 0.5f;
 	mDirection = mDestination - mNode->getPosition();
 	mDistance = mDirection.normalise();
 

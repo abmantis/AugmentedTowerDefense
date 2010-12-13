@@ -27,6 +27,7 @@ private:
 	bool isPosWall(Ogre::Vector2 pos);
 	bool isPosFloor(Ogre::Vector2 pos);
 	Ogre::Vector3 matrixCoordToSceneCoord(Ogre::Vector2 matrixCoord);
+	Ogre::Vector3 matrixCoordToSceneCoord(Ogre::Vector2 matrixCoord, Ogre::Real zPos);
 
 	Ogre::SceneManager* mSceneMgr;
 	Ogre::SceneNode* mSceneRootNode;
