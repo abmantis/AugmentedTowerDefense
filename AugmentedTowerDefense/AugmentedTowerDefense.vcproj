@@ -192,6 +192,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\CollisionTools.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\EnemyManager.cpp"
 				>
 			</File>
@@ -266,6 +270,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\include\CollisionTools.h"
+				>
+			</File>
+			<File
 				RelativePath=".\include\EnemyManager.h"
 				>
 			</File>
@@ -283,6 +291,10 @@
 			</File>
 			<File
 				RelativePath=".\include\SceneLoader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\SmoothRotator.h"
 				>
 			</File>
 			<File

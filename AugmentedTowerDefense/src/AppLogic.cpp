@@ -43,6 +43,9 @@ bool AppLogic::init(void)
 	setupLights();
 	createScene();
 
+	mColisionTools = new MOC::CollisionTools(mSceneMgr);
+
+
 	mSceneLoader = new SceneLoader(mSceneMgr);
 	mSceneLoader->init();
 
@@ -119,6 +122,9 @@ void AppLogic::shutdown(void)
 	mVideoDevice->shutdown();
 //	if(mVideoDevice) delete mVideoDevice;
 	mVideoDevice = NULL;
+
+	if(mColisionTools) delete mColisionTools;
+	mColisionTools = NULL;
 
 	if(mSceneLoader) delete mSceneLoader;
 	mSceneLoader = NULL;
@@ -315,7 +321,8 @@ bool AppLogic::OISListener::mouseMoved( const OIS::MouseEvent &arg )
 }
 
 bool AppLogic::OISListener::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
-{
+{	
+//	mColisionTools->raycastFromCamera(mParent->mApplication->mWindow, mParent->mCamera, arg. )
 	return true;
 }
 

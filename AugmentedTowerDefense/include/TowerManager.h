@@ -7,7 +7,7 @@ public:
 	Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi);
 	~Tower();
 
-	void update(Ogre::Real deltaTime, std::vector<Ogre::Vector3>* enemyPos);
+	void update(Ogre::Real deltaTime, std::vector<Ogre::Vector3>* enemyPosVec);
 private:
 
 	Ogre::SceneManager *mSceneMgr;
@@ -17,6 +17,7 @@ private:
 	Ogre::Entity *mBodyEntity;
 	Ogre::Entity *mHeadEntity;
 	Ogre::Entity *mGunsEntity;
+	Ogre::Real mMaxShootSquaredDistance;
 };
 
 class TowerManager

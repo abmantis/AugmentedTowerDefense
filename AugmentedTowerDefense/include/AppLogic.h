@@ -7,6 +7,7 @@
 #include "SceneLoader.h"
 #include "EnemyManager.h"
 #include "TowerManager.h"
+#include "CollisionTools.h"
 
 class OgreApp;
 class StatsFrameListener;
@@ -64,6 +65,7 @@ protected:
 	EnemyManager* mEnemyMgr;
 	TowerManager* mTowerMgr;
 	Ogre::AnimationState* mAnimState;
+	MOC::CollisionTools* mColisionTools;
 
 	StatsFrameListener *mStatsFrameListener;
 
