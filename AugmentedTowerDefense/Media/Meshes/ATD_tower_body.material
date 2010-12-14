@@ -1,0 +1,62 @@
+material 1_<Gray>
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.501960784313725 0.501960784313725 0.501960784313725
+      diffuse 0.501960784313725 0.501960784313725 0.501960784313725
+      specular 0.602352941176471 0.602352941176471 0.602352941176471 15.0
+      emissive 0.0 0.0 0.0
+    }
+  }
+}
+material 2_Concrete_Aggregate_Smoke
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.603921568627451 0.588235294117647 0.580392156862745
+      diffuse 0.603921568627451 0.588235294117647 0.580392156862745
+      specular 0.724705882352941 0.705882352941177 0.696470588235294 15.0
+      emissive 0.0 0.0 0.0
+      // texture size: 12.0, 12.0
+      texture_unit
+      {
+        texture 2_Concrete_Aggregate_Smoke.jpg
+      }
+    }
+  }
+}
+material 3_Material4
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.584313725490196 0.545098039215686 0.474509803921569
+      diffuse 0.584313725490196 0.545098039215686 0.474509803921569
+      specular 0.701176470588235 0.654117647058823 0.569411764705882 15.0
+      emissive 0.0 0.0 0.0
+      // texture size: 35.8267716535433, 30.5850952600022
+      texture_unit
+      {
+        texture 1_crye_multicam.jpg
+      }
+    }
+  }
+}
+material SketchupDefault
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.8 0.8 0.8
+      diffuse 0.8 0.8 0.8
+      specular 0.96 0.96 0.96 15.0
+      emissive 0.0 0.0 0.0
+    }
+  }
+}

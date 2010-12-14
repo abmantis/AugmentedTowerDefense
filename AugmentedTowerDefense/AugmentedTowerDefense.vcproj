@@ -240,6 +240,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\src\TowerManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\TrackingSystem.cpp"
 				>
 			</File>
@@ -287,6 +291,10 @@
 			</File>
 			<File
 				RelativePath=".\include\StdAfx.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\TowerManager.h"
 				>
 			</File>
 			<File

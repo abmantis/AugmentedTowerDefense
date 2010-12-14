@@ -6,6 +6,7 @@
 #include "TrackingSystem.h"
 #include "SceneLoader.h"
 #include "EnemyManager.h"
+#include "TowerManager.h"
 
 class OgreApp;
 class StatsFrameListener;
@@ -61,6 +62,7 @@ protected:
 	TrackingSystem* mTrackingSystem;
 	SceneLoader* mSceneLoader;
 	EnemyManager* mEnemyMgr;
+	TowerManager* mTowerMgr;
 	Ogre::AnimationState* mAnimState;
 
 	StatsFrameListener *mStatsFrameListener;

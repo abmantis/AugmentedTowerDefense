@@ -2,6 +2,9 @@
 #include "EnemyManager.h"
 #include "HelperClass.h"
 
+//////////////////////////////////////////////////////////////////////////
+// Enemy class
+//////////////////////////////////////////////////////////////////////////
 Enemy::Enemy( Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath )
 :mSceneMgr(sceneMgr), mWalkPath(walkPath)
 {
@@ -79,15 +82,21 @@ bool Enemy::nextLocation(void){
 	return true;
 }
 
-
-
-EnemyManager::EnemyManager( Ogre::SceneManager *sceneMgr )
+Ogre::Vector3 Enemy::getPosition()
 {
-	mSceneMgr = sceneMgr;
+	return mNode->getPosition();
+}
+
+//////////////////////////////////////////////////////////////////////////
+// EnemyManager class
+//////////////////////////////////////////////////////////////////////////
+EnemyManager::EnemyManager( Ogre::SceneManager *sceneMgr )
+: mSceneMgr(sceneMgr)
+{	
 	mTimeSinceLastWave = 0;	
 	mTimeSinceLastEnemyBorn = 0;
-	mVisible = false;
 	mEnemiesBorn = 0;
+	mVisible = false;
 }
 
 EnemyManager::~EnemyManager(void)
@@ -97,6 +106,10 @@ EnemyManager::~EnemyManager(void)
 void EnemyManager::init( std::vector<Ogre::Vector3> walkPath )
 {
 	mWalkPath = walkPath;
+
+	// set mVisible = true so that setVisible will process and change mVisible to false :)
+	mVisible = true;
+	setVisible(false);
 }
 
 void EnemyManager::update( Ogre::Real deltaTime )
@@ -164,19 +177,40 @@ void EnemyManager::update( Ogre::Real deltaTime )
 
 void EnemyManager::createEnemy()
 {
-	mEnemyArray.push_back(new Enemy(mSceneMgr, &mWalkPath));
+	Enemy* pEnemy = new Enemy(mSceneMgr, &mWalkPath);
+	pEnemy->setVisible(mVisible);
+	mEnemyArray.push_back(pEnemy);
 	mEnemiesBorn++;
 	mTimeSinceLastEnemyBorn = 0;
 }
 
 void EnemyManager::setVisible( bool visible )
 {
-	mVisible = visible;
-	std::list<Enemy*>::iterator it;
-	for(it=mEnemyArray.begin(); it != mEnemyArray.end(); it++)
+	if(visible != mVisible)
 	{
-		(*it)->setVisible(visible);
+		mVisible = visible;
+		std::list<Enemy*>::iterator it;
+		for(it=mEnemyArray.begin(); it != mEnemyArray.end(); it++)
+		{
+			(*it)->setVisible(visible);
+		}
+	}	
+}
+
+std::vector<Ogre::Vector3> EnemyManager::getEnemyPos()
+{
+	std::vector<Ogre::Vector3> enemyPosVec;
+
+	EnemyArray::iterator it;
+	EnemyArray::iterator itBegin = mEnemyArray.begin();
+	EnemyArray::iterator itEnd = mEnemyArray.end();
+
+	for(it = itBegin; it != itEnd; it++)
+	{
+		Enemy* pEnemy = (*it);
+		enemyPosVec.push_back(pEnemy->getPosition());
 	}
+	return enemyPosVec;
 }
 
 

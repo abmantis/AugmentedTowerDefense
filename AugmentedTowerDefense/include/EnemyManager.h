@@ -13,6 +13,8 @@ public:
 	void update(Ogre::Real deltaTime);
 	void setVisible(bool visible) { mEntity->setVisible(visible); }
 	EnemyState getState() { return mState; }
+	Ogre::Vector3 getPosition();
+
 private:
 	bool nextLocation(void);
 
@@ -38,6 +40,10 @@ public:
 	void init(std::vector<Ogre::Vector3> walkPath);
 	void update(Ogre::Real deltaTime);
 	void setVisible(bool visible);
+	void show() { setVisible(true); }
+	void hide() { setVisible(false); }
+
+	std::vector<Ogre::Vector3> getEnemyPos();
 
 private:
 	void createEnemy();

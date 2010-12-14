@@ -9,17 +9,18 @@
 AppLogic::AppLogic() : mApplication(NULL)
 {
 	// ogre
-	mSceneMgr		= NULL;
-	mViewport		= NULL;
-	mCamera         = NULL;
-	mCameraNode     = NULL;
-	mVideoDevice    = NULL;
-	mObjectNode     = NULL;
-	mTrackingSystem = NULL;
+	mSceneMgr			= NULL;
+	mViewport			= NULL;
+	mCamera				= NULL;
+	mCameraNode			= NULL;
+	mVideoDevice		= NULL;
+	mObjectNode			= NULL;
+	mTrackingSystem		= NULL;
 	mStatsFrameListener = NULL;
-	mAnimState = NULL;
-	mSceneLoader = NULL;
-	mEnemyMgr = NULL;
+	mAnimState			= NULL;
+	mSceneLoader		= NULL;
+	mEnemyMgr			= NULL;
+	mTowerMgr			= NULL;
 
 	mOISListener.mParent = this;
 }
@@ -53,6 +54,9 @@ bool AppLogic::init(void)
 	
 	mEnemyMgr = new EnemyManager(mSceneMgr);
 	mEnemyMgr->init(walkArray);
+
+	mTowerMgr = new TowerManager(mSceneMgr);
+	mTowerMgr->init();
 	
 	
 	//webcam resolution
@@ -89,22 +93,22 @@ bool AppLogic::update(Ogre::Real deltaTime)
 		{
 			//mObjectNode->setVisible(true);
 			mSceneLoader->show();
+			mEnemyMgr->show();
 			mCameraNode->setOrientation(mTrackingSystem->getOrientation());
 			mCameraNode->setPosition(mTrackingSystem->getTranslation());
 		}
 		else
 		{
 			mSceneLoader->hide();
+			mEnemyMgr->hide();
 			//mObjectNode->setVisible(false);
 		}
 	}
 
 	mEnemyMgr->update(deltaTime);
+	mTowerMgr->update(deltaTime, &(mEnemyMgr->getEnemyPos()));
 
 //	HelperClass::Print(mCameraNode->getPosition());
-
-// 	if (mAnimState)
-// 		mAnimState->addTime(deltaTime);
 
 	bool result = processInputs(deltaTime);
 	return result;
@@ -118,6 +122,12 @@ void AppLogic::shutdown(void)
 
 	if(mSceneLoader) delete mSceneLoader;
 	mSceneLoader = NULL;
+
+	if(mEnemyMgr) delete mEnemyMgr;
+	mEnemyMgr = NULL;
+
+	if(mTowerMgr) delete mTowerMgr;
+	mTowerMgr = NULL;
 
 	if(mTrackingSystem) delete mTrackingSystem;
 	mTrackingSystem = NULL;
@@ -190,7 +200,7 @@ void AppLogic::createScene(void)
 // 	mAnimState->setEnabled(true);
 
 
-	HelperClass::CreateAxis(mSceneMgr);
+//	HelperClass::CreateAxis(mSceneMgr);
 }
 
 void AppLogic::initTracking( int &width, int &height )
@@ -262,7 +272,7 @@ void AppLogic::createWebcamPlane(int width, int height, Ogre::Real _distanceFrom
 	// Update orientation
 	node->setOrientation(mCamera->getOrientation());
 
-	planeEntity->setVisible(false);
+//	planeEntity->setVisible(false);
 
 }
 
