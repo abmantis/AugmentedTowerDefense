@@ -23,9 +23,8 @@ Tower::Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi)
 	// Find head center to set guns center
 	Ogre::Vector3 headcenter = mHeadEntity->getBoundingBox().getCenter();
 	mGunsEntity = mSceneMgr->createEntity("ATD_tower_guns.mesh");
-	mGunsNode = mHeadNode->createChildSceneNode();
+	mGunsNode = mHeadNode->createChildSceneNode(headcenter);
 	mGunsNode->attachObject(mGunsEntity);
-	mGunsNode->setPosition(headcenter);
 
 	mBodyNode->setPosition(posi);
 	mBodyNode->setScale(3,3,3);
@@ -45,14 +44,28 @@ void Tower::update( Ogre::Real deltaTime, std::vector<Ogre::Vector3>* enemyPos )
 	if(enemyPos->size()>0)
 	{
 		Ogre::Vector3 enemy = (*enemyPos)[0];
+
+		//////////////////////////////////////
 		// The tower is originally facing -Y
 
-		Ogre::Vector3 dest = mHeadNode->getPosition()-enemy;
-		Ogre::Vector3 unityZ = Ogre::Vector3::UNIT_Z;
-		mHeadNode->roll(unityZ.angleBetween(dest));
+		// Rotate head
+		Ogre::Vector3 direction = enemy - mHeadNode->_getDerivedPosition();//getPosition();
+		Ogre::Vector3 src = mHeadNode->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Y;
+		direction.z = 0;	// Strip out Z component (we only want to rotate arround X & Y)
+		src.z = 0;
+ 		direction.normalise();
+ 		src.normalise();
+		HelperClass::DoSafeRotation(mHeadNode, src, direction);
 
-		//mHeadNode->setOrientation(Ogre::Vector3::NEGATIVE_UNIT_Y.getRotationTo(enemy));
-
+		// Tilt gun
+		Ogre::Vector3 gunWorldPos = mGunsNode->_getDerivedPosition();
+		direction = enemy - gunWorldPos;
+		Ogre::Real height = gunWorldPos.z - enemy.z;
+		Ogre::Real distance = direction.length();
+		Ogre::Radian pitchAngle = Ogre::Degree(90) - Ogre::Math::ACos(height / distance);
+		Ogre::Quaternion quat;
+		quat.FromAngleAxis(pitchAngle, Ogre::Vector3::UNIT_X);
+		mGunsNode->setOrientation(quat);
 	}
 }
 
@@ -62,7 +75,7 @@ void Tower::update( Ogre::Real deltaTime, std::vector<Ogre::Vector3>* enemyPos )
 TowerManager::TowerManager( Ogre::SceneManager *sceneMgr )
 : mSceneMgr(sceneMgr)
 {
-	t = new Tower(mSceneMgr, Ogre::Vector3(9, 0, 15));
+	t = new Tower(mSceneMgr, Ogre::Vector3(15, 0, 15));
 }
 
 void TowerManager::init()

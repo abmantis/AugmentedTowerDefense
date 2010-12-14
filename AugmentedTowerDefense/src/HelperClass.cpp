@@ -126,4 +126,17 @@ void HelperClass::DestroyAllAttachedMovableObjects( Ogre::SceneNode* pNode )
 	}
 }
 
+void HelperClass::DoSafeRotation( Ogre::SceneNode *pNode, Ogre::Vector3 src, Ogre::Vector3 direction )
+{
+	if ((1.0f + src.dotProduct(direction)) < 0.0001f) 
+	{
+		pNode->yaw(Ogre::Degree(180));
+	}
+	else
+	{
+		Ogre::Quaternion quat = src.getRotationTo(direction);
+		pNode->rotate(quat);
+	}
+}
+
 
