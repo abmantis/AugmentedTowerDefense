@@ -9,15 +9,18 @@
 Tower::Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi)
 : mSceneMgr(sceneMgr)
 {
-	mMaxShootSquaredDistance = 4000;
+	Ogre::int32 mask = 1<<3;
+	mMaxShootSquaredDistance = 40000;
 
 	// Body
 	mBodyEntity = mSceneMgr->createEntity("ATD_tower_body.mesh");
+	mBodyEntity->setQueryFlags(mask);
 	mBodyNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 	mBodyNode->attachObject(mBodyEntity);
 
 	// Head
 	mHeadEntity = mSceneMgr->createEntity("ATD_tower_head.mesh");
+	mHeadEntity->setQueryFlags(mask);
 	mHeadNode = mBodyNode->createChildSceneNode();
 	mHeadNode->attachObject(mHeadEntity);
 
@@ -25,11 +28,13 @@ Tower::Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi)
 	// Find head center to set guns center
 	Ogre::Vector3 headcenter = mHeadEntity->getBoundingBox().getCenter();
 	mGunsEntity = mSceneMgr->createEntity("ATD_tower_guns.mesh");
+	mGunsEntity->setQueryFlags(mask);
 	mGunsNode = mHeadNode->createChildSceneNode(headcenter);
 	mGunsNode->attachObject(mGunsEntity);
 
 	mBodyNode->setPosition(posi);
 	mBodyNode->setScale(3,3,3);
+
 
 // 	mHeadNode->roll(Ogre::Degree(25));
 // 	mGunsNode->pitch(Ogre::Degree(25));
@@ -92,7 +97,17 @@ void Tower::update( Ogre::Real deltaTime, std::vector<Ogre::Vector3>* enemyPosVe
 TowerManager::TowerManager( Ogre::SceneManager *sceneMgr )
 : mSceneMgr(sceneMgr)
 {
-	t = new Tower(mSceneMgr, Ogre::Vector3(15, 0, 15));
+// 	mTowerVec.push_back(new Tower(mSceneMgr, Ogre::Vector3(15, -15, 15)));
+// 	mTowerVec.push_back(new Tower(mSceneMgr, Ogre::Vector3(15*3, 15*3, 15)));
+}
+
+TowerManager::~TowerManager( void )
+{
+	for(unsigned int i = 0; i < mTowerVec.size(); i++)
+	{
+		if(mTowerVec[i]) delete mTowerVec[i];
+		mTowerVec[i] = NULL;
+	}
 }
 
 void TowerManager::init()
@@ -102,10 +117,14 @@ void TowerManager::init()
 
 void TowerManager::update( Ogre::Real deltaTime, std::vector<Ogre::Vector3> *enemyPos )
 {
-	t->update(deltaTime, enemyPos);
+	for(unsigned int i = 0; i < mTowerVec.size(); i++)
+	{
+		mTowerVec[i]->update(deltaTime, enemyPos);
+	}
 }
 
-TowerManager::~TowerManager( void )
+void TowerManager::addTower( Ogre::Vector3 pos )
 {
-
+	mTowerVec.push_back(new Tower(mSceneMgr, pos));
 }
+

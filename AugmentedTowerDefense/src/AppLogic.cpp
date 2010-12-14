@@ -6,9 +6,8 @@
 #include "AppLogic.h"
 
 
-AppLogic::AppLogic() : mApplication(NULL)
+AppLogic::AppLogic() : mApplication()
 {
-	// ogre
 	mSceneMgr			= NULL;
 	mViewport			= NULL;
 	mCamera				= NULL;
@@ -185,6 +184,7 @@ void AppLogic::createCamera(void)
 
 void AppLogic::createScene(void)
 {
+	Ogre::Entity::setDefaultQueryFlags(0);
 	mSceneMgr->setSkyBox(true, "Examples/Grid");
 
 // 	Ogre::Real scale = 10;
@@ -321,13 +321,42 @@ bool AppLogic::OISListener::mouseMoved( const OIS::MouseEvent &arg )
 }
 
 bool AppLogic::OISListener::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
-{	
-//	mColisionTools->raycastFromCamera(mParent->mApplication->mWindow, mParent->mCamera, arg. )
+{		
 	return true;
 }
 
 bool AppLogic::OISListener::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 {
+	Ogre::Vector2 mouseCoords((float)arg.state.X.abs,(float)arg.state.Y.abs * 1.0f);
+	Ogre::Entity *pWallTarget = NULL;
+	float closestDist;
+	Ogre::Vector3 result;
+
+	if(mParent->mColisionTools->raycastFromCamera(mParent->mApplication->getRenderWindow(),
+		mParent->mCamera, mouseCoords, result, pWallTarget, closestDist, 2))
+	{
+		//mParent->mStatsFrameListener->setDebugText(HelperClass::ToString(mouseCoords));
+		//mParent->mTowerMgr->addTower(result);
+		Ogre::SceneNode *pWallNode = pWallTarget->getParentSceneNode();
+		Ogre::Vector3 wallPos = pWallNode->getPosition();
+		
+		//////////////////////////////////////////////////////////////////////////
+		// Make sure there's not a tower already in this wall 
+		Ogre::Entity *pTowerTarget = NULL;
+		Ogre::Vector3 pointAboveWallCenter(wallPos.x, wallPos.y, 99999);
+		if(mParent->mColisionTools->raycastFromPoint(pointAboveWallCenter, 
+			Ogre::Vector3::NEGATIVE_UNIT_Z, result, pTowerTarget, closestDist, 1<<3) == false)
+		{
+			
+			wallPos.z += pWallTarget->getBoundingBox().getSize().z * pWallNode->getScale().z * 0.5f;
+			mParent->mTowerMgr->addTower(wallPos);
+			mParent->mStatsFrameListener->setDebugText("Nova torre");
+		}	
+		else
+		{
+			mParent->mStatsFrameListener->setDebugText("Ja ha torre");
+		}
+	}
 	return true;
 }
 

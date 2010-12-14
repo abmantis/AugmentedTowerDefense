@@ -28,9 +28,12 @@ public:
 
 	void init();
 	void update(Ogre::Real deltaTime, std::vector<Ogre::Vector3> *enemyPos);
+	void addTower(Ogre::Vector3 pos);
 private:
 
-	Tower *t;
+// 	Tower *t;
+// 	Tower *t2;
 	Ogre::SceneManager *mSceneMgr;
+	std::vector<Tower*> mTowerVec;
 };
 #endif // TowerManager_h__

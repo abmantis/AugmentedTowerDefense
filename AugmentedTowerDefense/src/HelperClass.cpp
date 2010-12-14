@@ -54,7 +54,7 @@ void HelperClass::CreateAxis( Ogre::SceneManager *sceneMgr )
 
 void HelperClass::Print( Ogre::Vector3 vector3, std::string prefix /*= ""*/, std::string sufix /*= "\n"*/ )
 {
-	std::cout << prefix << vector3.x << ";" << vector3.y << ";" << vector3.z << sufix;
+	std::cout << prefix << ToString(vector3) << sufix;
 }
 
 void HelperClass::Print( Ogre::Matrix4 matrix4, std::string prefix /*= ""*/, std::string sufix /*= "\n"*/ )
@@ -77,6 +77,40 @@ std::string HelperClass::ToString( int iVal )
 	std::stringstream st;
 	st << iVal;
 	return st.str();
+}
+
+std::string HelperClass::ToString( Ogre::Vector3 vector3 )
+{
+	std::string str = "";
+	std::stringstream st;
+	
+	st << vector3.x;
+	str = st.str() + "; ";
+	
+	st.clear();
+	st << vector3.y;
+	str += st.str() + "; ";
+	
+	st.clear();
+	st << vector3.z;
+	str += st.str();
+	
+	return str;
+}
+
+std::string HelperClass::ToString( Ogre::Vector2 vector2 )
+{
+	std::string str = "";
+	std::stringstream st;
+
+	st << vector2.x;
+	str = st.str() + "; ";
+
+	st.clear();
+	st << vector2.y;
+	str += st.str();
+
+	return str;
 }
 
 void HelperClass::CreateLine( Ogre::SceneManager *sceneMgr, Ogre::Vector3 start, Ogre::Vector3 end )

@@ -95,6 +95,7 @@ void SceneLoader::createWall( Ogre::Vector3 pos, Ogre::Real scale )
 //  	mesh->buildEdgeList();
 
 	ent->setCastShadows(true);
+	ent->setQueryFlags(2);
 	Ogre::SceneNode* node = mSceneRootNode->createChildSceneNode("Wall_" + HelperClass::ToString(mWallCount));
 	node->setPosition(pos);
 	node->setScale(Ogre::Vector3::UNIT_SCALE*scale);

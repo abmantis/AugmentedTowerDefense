@@ -14,6 +14,8 @@ public:
 	static void Print(Ogre::Vector3 vector3, std::string prefix = "", std::string sufix = "\n");
 	static void Print(Ogre::Matrix4 matrix4, std::string prefix = "", std::string sufix = "\n");
 	static std::string ToString(int iVal);
+	static std::string ToString(Ogre::Vector3 vector3);
+	static std::string ToString(Ogre::Vector2 vector2);
 	static void DestroyAllAttachedMovableObjects(Ogre::SceneNode* pNode);
 	static void DoSafeRotation(Ogre::SceneNode *pNode, Ogre::Vector3 src, Ogre::Vector3 direction);
 };
