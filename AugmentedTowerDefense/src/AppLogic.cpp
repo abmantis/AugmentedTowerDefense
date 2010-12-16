@@ -2,7 +2,7 @@
 #include "OgreApp.h"
 #include "Chrono.h"
 #include "StatsFrameListener.h"
-#include "HelperClass.h"
+#include "SharedStuff.h"
 #include "AppLogic.h"
 
 
@@ -43,22 +43,6 @@ bool AppLogic::init(void)
 	createScene();
 
 	mColisionTools = new MOC::CollisionTools(mSceneMgr);
-
-
-	mSceneLoader = new SceneLoader(mSceneMgr);
-	mSceneLoader->init();
-
-	std::vector<Ogre::Vector3> walkArray = mSceneLoader->getWalkVector();
-	//for(Ogre::uint i = 1; i < walkArray.size(); i++)
-	//{
-	//	HelperClass::CreateLine(mSceneMgr, walkArray[i-1], walkArray[i]);
-	//}
-	
-	mEnemyMgr = new EnemyManager(mSceneMgr);
-	mEnemyMgr->init(walkArray);
-
-	mTowerMgr = new TowerManager(mSceneMgr);
-	mTowerMgr->init();
 	
 	
 	//webcam resolution
@@ -184,8 +168,27 @@ void AppLogic::createCamera(void)
 
 void AppLogic::createScene(void)
 {
-	Ogre::Entity::setDefaultQueryFlags(0);
+	Ogre::Entity::setDefaultQueryFlags(AugmentedTowerDefense::MASK_DEFAULT);
 	mSceneMgr->setSkyBox(true, "Examples/Grid");
+
+	mSceneLoader = new SceneLoader(mSceneMgr);
+	mSceneLoader->init();
+	mSceneLoader->hide();
+
+	std::vector<Ogre::Vector3> walkArray = mSceneLoader->getWalkVector();
+	//for(Ogre::uint i = 1; i < walkArray.size(); i++)
+	//{
+	//	HelperClass::CreateLine(mSceneMgr, walkArray[i-1], walkArray[i]);
+	//}
+
+	mEnemyMgr = new EnemyManager(mSceneMgr);
+	mEnemyMgr->init(walkArray);
+	mEnemyMgr->hide();
+
+	mTowerMgr = new TowerManager(mSceneMgr);
+	mTowerMgr->init();
+	mTowerMgr->hide();
+
 
 // 	Ogre::Real scale = 10;
 // 	Ogre::Entity* ent = mSceneMgr->createEntity("Sinbad.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
@@ -282,19 +285,6 @@ void AppLogic::createWebcamPlane(int width, int height, Ogre::Real _distanceFrom
 
 }
 
-//--------------------------------- update --------------------------------
-
-bool AppLogic::processInputs(Ogre::Real deltaTime)
-{
-	OIS::Keyboard *keyboard = mApplication->getKeyboard();
-	if(keyboard->isKeyDown(OIS::KC_ESCAPE))
-	{
-		return false;
-	}
-
-	return true;
-}
-
 void AppLogic::setupLights()
 {
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.3f, 0.3f, 0.3f));
@@ -315,6 +305,29 @@ void AppLogic::setupLights()
 
 }
 
+void AppLogic::hideScene()
+{
+
+}
+
+void AppLogic::showScene()
+{
+
+}
+
+//--------------------------------- Inputs --------------------------------
+
+bool AppLogic::processInputs(Ogre::Real deltaTime)
+{
+	OIS::Keyboard *keyboard = mApplication->getKeyboard();
+	if(keyboard->isKeyDown(OIS::KC_ESCAPE))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 bool AppLogic::OISListener::mouseMoved( const OIS::MouseEvent &arg )
 {
 	return true;
@@ -332,30 +345,25 @@ bool AppLogic::OISListener::mouseReleased( const OIS::MouseEvent &arg, OIS::Mous
 	float closestDist;
 	Ogre::Vector3 result;
 
+	// fire a ray from camera position that only detects walls (MASK_WALLS)
 	if(mParent->mColisionTools->raycastFromCamera(mParent->mApplication->getRenderWindow(),
-		mParent->mCamera, mouseCoords, result, pWallTarget, closestDist, 2))
+		mParent->mCamera, mouseCoords, result, pWallTarget, closestDist, AugmentedTowerDefense::MASK_WALLS))
 	{
-		//mParent->mStatsFrameListener->setDebugText(HelperClass::ToString(mouseCoords));
-		//mParent->mTowerMgr->addTower(result);
 		Ogre::SceneNode *pWallNode = pWallTarget->getParentSceneNode();
-		Ogre::Vector3 wallPos = pWallNode->getPosition();
-		
-		//////////////////////////////////////////////////////////////////////////
-		// Make sure there's not a tower already in this wall 
+		Ogre::Vector3 wallPos = pWallNode->getPosition();	
 		Ogre::Entity *pTowerTarget = NULL;
 		Ogre::Vector3 pointAboveWallCenter(wallPos.x, wallPos.y, 99999);
-		if(mParent->mColisionTools->raycastFromPoint(pointAboveWallCenter, 
-			Ogre::Vector3::NEGATIVE_UNIT_Z, result, pTowerTarget, closestDist, 1<<3) == false)
+
+		//////////////////////////////////////////////////////////////////////////
+		// Make sure there's not a tower already in this wall 
+		if(pWallTarget->isVisible() && mParent->mColisionTools->raycastFromPoint(
+			pointAboveWallCenter, Ogre::Vector3::NEGATIVE_UNIT_Z, result, pTowerTarget, 
+			closestDist, AugmentedTowerDefense::MASK_TOWER) == false)
 		{
 			
 			wallPos.z += pWallTarget->getBoundingBox().getSize().z * pWallNode->getScale().z * 0.5f;
 			mParent->mTowerMgr->addTower(wallPos);
-			mParent->mStatsFrameListener->setDebugText("Nova torre");
 		}	
-		else
-		{
-			mParent->mStatsFrameListener->setDebugText("Ja ha torre");
-		}
 	}
 	return true;
 }

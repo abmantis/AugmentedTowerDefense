@@ -3,7 +3,7 @@
 #include "TrackingSystem.h"
 
 #include "ARToolKitPlus/TrackerMultiMarkerImpl.h"
-#include "HelperClass.h"
+#include "SharedStuff.h"
 
 
 Marker::Marker()
@@ -145,7 +145,7 @@ void TrackingSystem::printMarkersInfo()
 	{
 		int id = config->marker[i].patt_id;
 		Ogre::Matrix4 trans = convert(config->marker[i].trans);
-		HelperClass::Print(trans, HelperClass::ToString(id));
+		AugmentedTowerDefense::HelperClass::Print(trans, AugmentedTowerDefense::HelperClass::ToString(id));
 	}
 }
 

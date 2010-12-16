@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "SceneLoader.h"
-#include "HelperClass.h"
+#include "SharedStuff.h"
 
 SceneLoader::SceneLoader(Ogre::SceneManager* sceneMgr)
 {
@@ -95,8 +95,8 @@ void SceneLoader::createWall( Ogre::Vector3 pos, Ogre::Real scale )
 //  	mesh->buildEdgeList();
 
 	ent->setCastShadows(true);
-	ent->setQueryFlags(2);
-	Ogre::SceneNode* node = mSceneRootNode->createChildSceneNode("Wall_" + HelperClass::ToString(mWallCount));
+	ent->setQueryFlags(AugmentedTowerDefense::MASK_WALLS);
+	Ogre::SceneNode* node = mSceneRootNode->createChildSceneNode("Wall_" + AugmentedTowerDefense::HelperClass::ToString(mWallCount));
 	node->setPosition(pos);
 	node->setScale(Ogre::Vector3::UNIT_SCALE*scale);
 	node->attachObject(ent);

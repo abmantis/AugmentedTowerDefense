@@ -51,6 +51,9 @@ protected:
 	void initTracking(int &width, int &height);
 	void createWebcamPlane(int width, int height, Ogre::Real _distanceFromCamera);
 
+	void hideScene();
+	void showScene();
+
 	// OGRE
 	OgreApp *mApplication;
 	Ogre::SceneManager *mSceneMgr;

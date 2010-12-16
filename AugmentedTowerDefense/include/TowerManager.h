@@ -8,6 +8,7 @@ public:
 	~Tower();
 
 	void update(Ogre::Real deltaTime, std::vector<Ogre::Vector3>* enemyPosVec);
+	void setVisible(bool visible);
 private:
 
 	Ogre::SceneManager *mSceneMgr;
@@ -29,11 +30,13 @@ public:
 	void init();
 	void update(Ogre::Real deltaTime, std::vector<Ogre::Vector3> *enemyPos);
 	void addTower(Ogre::Vector3 pos);
+	void setVisible(bool visible);
+	void show() { setVisible(true); }
+	void hide() { setVisible(false); }
 private:
 
-// 	Tower *t;
-// 	Tower *t2;
 	Ogre::SceneManager *mSceneMgr;
 	std::vector<Tower*> mTowerVec;
+	bool mVisible;
 };
 #endif // TowerManager_h__

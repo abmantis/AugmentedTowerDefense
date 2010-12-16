@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "EnemyManager.h"
-#include "HelperClass.h"
+#include "SharedStuff.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Enemy class
@@ -25,7 +25,7 @@ Enemy::Enemy( Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath
 
 Enemy::~Enemy()
 {
-	HelperClass::DestroyAllAttachedMovableObjects(mNode);
+	AugmentedTowerDefense::HelperClass::DestroyAllAttachedMovableObjects(mNode);
 	mNode->removeAndDestroyAllChildren();
 	mSceneMgr->destroySceneNode(mNode);
 }

@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "TowerManager.h"
-#include "HelperClass.h"
+#include "SharedStuff.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -9,7 +9,7 @@
 Tower::Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi)
 : mSceneMgr(sceneMgr)
 {
-	Ogre::int32 mask = 1<<3;
+	Ogre::int32 mask = AugmentedTowerDefense::MASK_TOWER;
 	mMaxShootSquaredDistance = 40000;
 
 	// Body
@@ -77,7 +77,7 @@ void Tower::update( Ogre::Real deltaTime, std::vector<Ogre::Vector3>* enemyPosVe
 		src.z = 0;
  		direction.normalise();
  		src.normalise();
-		HelperClass::DoSafeRotation(mHeadNode, src, direction);
+		AugmentedTowerDefense::HelperClass::DoSafeRotation(mHeadNode, src, direction);
 
 		// Tilt gun
 		Ogre::Vector3 gunWorldPos = mGunsNode->_getDerivedPosition();
@@ -91,14 +91,18 @@ void Tower::update( Ogre::Real deltaTime, std::vector<Ogre::Vector3>* enemyPosVe
 	}
 }
 
+void Tower::setVisible( bool visible )
+{
+	mBodyNode->setVisible(visible);	
+}
+
 //////////////////////////////////////////////////////////////////////////
 // TowerManager class
 //////////////////////////////////////////////////////////////////////////
 TowerManager::TowerManager( Ogre::SceneManager *sceneMgr )
 : mSceneMgr(sceneMgr)
 {
-// 	mTowerVec.push_back(new Tower(mSceneMgr, Ogre::Vector3(15, -15, 15)));
-// 	mTowerVec.push_back(new Tower(mSceneMgr, Ogre::Vector3(15*3, 15*3, 15)));
+ 	mVisible = false;
 }
 
 TowerManager::~TowerManager( void )
@@ -112,7 +116,9 @@ TowerManager::~TowerManager( void )
 
 void TowerManager::init()
 {
-
+	// set mVisible = true so that setVisible will process and change mVisible to false :)
+	mVisible = true;
+	setVisible(false);
 }
 
 void TowerManager::update( Ogre::Real deltaTime, std::vector<Ogre::Vector3> *enemyPos )
@@ -126,5 +132,18 @@ void TowerManager::update( Ogre::Real deltaTime, std::vector<Ogre::Vector3> *ene
 void TowerManager::addTower( Ogre::Vector3 pos )
 {
 	mTowerVec.push_back(new Tower(mSceneMgr, pos));
+}
+
+void TowerManager::setVisible( bool visible )
+{
+	if(visible != mVisible)
+	{
+		mVisible = visible;
+		int towerCount = mTowerVec.size();
+		for(int i = 0; i< towerCount; i++)
+		{
+			mTowerVec[i]->setVisible(mVisible);
+		}
+	}
 }
 
