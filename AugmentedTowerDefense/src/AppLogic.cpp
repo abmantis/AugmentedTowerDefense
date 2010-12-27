@@ -50,7 +50,7 @@ bool AppLogic::init(void)
 	int height;
 
 	initTracking(width, height);
-	createWebcamPlane(width, height, 45000.0f);	
+	createWebcamPlane(width, height, 4500.0f);	
 
 	mStatsFrameListener = new StatsFrameListener(mApplication->getRenderWindow());
 	mApplication->getOgreRoot()->addFrameListener(mStatsFrameListener);
@@ -265,21 +265,24 @@ void AppLogic::createWebcamPlane(int width, int height, Ogre::Real _distanceFrom
 	float planeWidth = planeHeight * videoAspectRatio;
 
 	Ogre::Plane p(Ogre::Vector3::UNIT_Z, 0.0);
-	Ogre::MeshManager::getSingleton().createPlane("VerticalPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, p , planeWidth, planeHeight, 1, 1, true, 1, 1, 1, Ogre::Vector3::UNIT_Y);
+	Ogre::MeshManager::getSingleton().createPlane("VerticalPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+		p , planeWidth, planeHeight, 1, 1, true, 1, 1, 1, Ogre::Vector3::UNIT_Y);
 	Ogre::Entity* planeEntity = mSceneMgr->createEntity("VideoPlane", "VerticalPlane"); 
 	planeEntity->setMaterialName("WebcamMaterial");
 	planeEntity->setRenderQueueGroup(Ogre::RENDER_QUEUE_WORLD_GEOMETRY_1);
+	planeEntity->setCastShadows(false);
 
 	// Create a node for the plane, inserts it in the scene
 	Ogre::SceneNode* node = mCameraNode->createChildSceneNode("planeNode");
 	node->attachObject(planeEntity);
 
 	// Update position    
-	Ogre::Vector3 planePos = mCamera->getPosition() + mCamera->getDirection() * _distanceFromCamera;
+	Ogre::Vector3 planePos(0, 0, _distanceFromCamera);// = mCamera->getPosition() + mCamera->getDirection() * _distanceFromCamera;
 	node->setPosition(planePos);
 
 	// Update orientation
-	node->setOrientation(mCamera->getOrientation());
+	node->setDirection(Ogre::Vector3::UNIT_Z);
+	//node->setOrientation(mCamera->getOrientation());
 
 //	planeEntity->setVisible(false);
 
