@@ -83,18 +83,16 @@ std::string AugmentedTowerDefense::HelperClass::ToString( int iVal )
 std::string AugmentedTowerDefense::HelperClass::ToString( Ogre::Vector3 vector3 )
 {
 	std::string str = "";
-	std::stringstream st;
+	std::stringstream stx, sty, stz;
 	
-	st << vector3.x;
-	str = st.str() + "; ";
-	
-	st.clear();
-	st << vector3.y;
-	str += st.str() + "; ";
-	
-	st.clear();
-	st << vector3.z;
-	str += st.str();
+	stx << vector3.x;
+	str = stx.str() + "; ";
+
+	sty << vector3.y;
+	str += sty.str() + "; ";
+
+	stz << vector3.z;
+	str += stz.str();
 	
 	return str;
 }
@@ -102,14 +100,13 @@ std::string AugmentedTowerDefense::HelperClass::ToString( Ogre::Vector3 vector3 
 std::string AugmentedTowerDefense::HelperClass::ToString( Ogre::Vector2 vector2 )
 {
 	std::string str = "";
-	std::stringstream st;
+	std::stringstream stx, sty, stz;
 
-	st << vector2.x;
-	str = st.str() + "; ";
+	stx << vector2.x;
+	str = stx.str() + "; ";
 
-	st.clear();
-	st << vector2.y;
-	str += st.str();
+	sty << vector2.y;
+	str += sty.str();
 
 	return str;
 }
