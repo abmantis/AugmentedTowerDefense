@@ -36,11 +36,17 @@ bool AppLogic::preInit(const Ogre::StringVector &commandArgs)
 // postAppInit
 bool AppLogic::init(void)
 {
+	mConfigMgr = new ConfigurationManager();
+	mConfigMgr->init();
+
 	createSceneManager();
 	createViewport();
 	createCamera();
 	setupLights();
 	createScene();
+
+	Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(mConfigMgr->TextureFilter());
+	Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(mConfigMgr->AnisotropyLevel());
 
 	mColisionTools = new MOC::CollisionTools(mSceneMgr);
 	
@@ -290,19 +296,19 @@ void AppLogic::setupLights()
 {
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.3f, 0.3f, 0.3f));
 // 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.0f, 0.0f, 0.0f));
-	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+	mSceneMgr->setShadowTechnique(mConfigMgr->ShadowType());
 
-	Ogre::Light* pointLight = mSceneMgr->createLight("pointLight");
-	pointLight->setType(Ogre::Light::LT_POINT);	
-	pointLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
-	pointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
-	pointLight->setPosition(Ogre::Vector3(0, 100, 250));
+	//Ogre::Light* pointLight = mSceneMgr->createLight("pointLight");
+	//pointLight->setType(Ogre::Light::LT_POINT);	
+	//pointLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
+	//pointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+	//pointLight->setPosition(Ogre::Vector3(0, 100, 250));
 
-// 	Ogre::Light* dirLight = mSceneMgr->createLight("dirLight");
-// 	dirLight->setType(Ogre::Light::LT_DIRECTIONAL);	
-// 	dirLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
-// 	dirLight->setSpecularColour(1.0f, 1.0f, 1.0f);
-// 	dirLight->setDirection(Ogre::Vector3(-0.2f, -0.5f, -1));
+ 	Ogre::Light* dirLight = mSceneMgr->createLight("dirLight");
+ 	dirLight->setType(Ogre::Light::LT_DIRECTIONAL);	
+ 	dirLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
+ 	dirLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+ 	dirLight->setDirection(Ogre::Vector3(-0.2f, -0.5f, -1));
 
 }
 

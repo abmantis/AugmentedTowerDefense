@@ -196,6 +196,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\ConfigurationManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\EnemyManager.cpp"
 				>
 			</File>
@@ -271,6 +275,10 @@
 			</File>
 			<File
 				RelativePath=".\include\CollisionTools.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\ConfigurationManager.h"
 				>
 			</File>
 			<File

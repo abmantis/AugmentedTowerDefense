@@ -109,7 +109,7 @@ void SceneLoader::createFloor( Ogre::Real width, Ogre::Real height )
 	Ogre::Plane plane(Ogre::Vector3::UNIT_Z, 0);
 
 	Ogre::MeshManager::getSingleton().createPlane("FloorPlane", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-		plane, width, height, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Y);
+		plane, width, height, 20, 20, true, 1, 1, 1, Ogre::Vector3::UNIT_Y);
 
 	Ogre::Entity* entFloor = mSceneMgr->createEntity("FloorEntity", "FloorPlane");
 	entFloor->setMaterialName("Examples/GrassFloor");
