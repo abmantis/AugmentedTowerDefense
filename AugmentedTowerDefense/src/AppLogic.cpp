@@ -78,15 +78,13 @@ bool AppLogic::update(Ogre::Real deltaTime)
 		if (mTrackingSystem->update(box))
 		{
 			//mObjectNode->setVisible(true);
-			mSceneLoader->show();
-			mEnemyMgr->show();
+			showScene();
 			mCameraNode->setOrientation(mTrackingSystem->getOrientation());
 			mCameraNode->setPosition(mTrackingSystem->getTranslation());
 		}
 		else
 		{
-			mSceneLoader->hide();
-			mEnemyMgr->hide();
+			hideScene();
 			//mObjectNode->setVisible(false);
 		}
 	}
@@ -310,12 +308,16 @@ void AppLogic::setupLights()
 
 void AppLogic::hideScene()
 {
-
+	mSceneLoader->hide();
+	mEnemyMgr->hide();
+	mTowerMgr->hide();
 }
 
 void AppLogic::showScene()
 {
-
+	mSceneLoader->show();
+	mEnemyMgr->show();
+	mTowerMgr->show();
 }
 
 //--------------------------------- Inputs --------------------------------
