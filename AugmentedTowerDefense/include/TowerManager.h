@@ -2,7 +2,7 @@
 #define TowerManager_h__
 
 class Tower
-{
+{	
 public:
 	Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi);
 	~Tower();
@@ -11,6 +11,7 @@ public:
 	void setVisible(bool visible);
 private:
 
+	class Shot;
 	Ogre::SceneManager *mSceneMgr;
 	Ogre::SceneNode *mBodyNode;
 	Ogre::SceneNode *mHeadNode;
@@ -19,6 +20,25 @@ private:
 	Ogre::Entity *mHeadEntity;
 	Ogre::Entity *mGunsEntity;
 	Ogre::Real mMaxShootSquaredDistance;
+	Ogre::Real mTimeSinceLastShot;
+	Ogre::Real mShotRateTime;
+	Shot* mShot;
+
+	class Shot
+	{
+	public:
+		Shot(Ogre::SceneManager* sceneMgr, Ogre::Vector3 startPos, Ogre::Vector3 enemyPos);
+		~Shot();
+		bool update(Ogre::Real deltaTime);
+	private:
+
+		Ogre::SceneManager* mSceneMgr;
+		Ogre::Entity *mEntity;
+		Ogre::SceneNode *mNode;
+		Ogre::Real mSpeed;
+		Ogre::Vector3 mDirection;
+		Ogre::Real mDistance;
+	};
 };
 
 class TowerManager

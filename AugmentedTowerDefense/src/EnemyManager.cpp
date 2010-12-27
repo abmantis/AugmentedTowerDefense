@@ -9,7 +9,7 @@ Enemy::Enemy( Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath
 :mSceneMgr(sceneMgr), mWalkPath(walkPath)
 {
 	mWalkToPos = 0;
-	mSpeed = 25;
+	mSpeed = 10;
 	mScale = 6;
 	
 	mEntity = mSceneMgr->createEntity("atd_cube.mesh");
@@ -167,7 +167,7 @@ void EnemyManager::update( Ogre::Real deltaTime )
 		}
 
 		mTimeSinceLastEnemyBorn += deltaTime;
-		if(mTimeSinceLastEnemyBorn > 1.0f && mEnemiesBorn < 5)
+		if(mTimeSinceLastEnemyBorn > 2.0f && mEnemiesBorn < 5)
 		{
 			createEnemy();
 		}		

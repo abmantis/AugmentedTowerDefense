@@ -297,18 +297,18 @@ void AppLogic::setupLights()
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.3f, 0.3f, 0.3f));
 // 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.0f, 0.0f, 0.0f));
 	mSceneMgr->setShadowTechnique(mConfigMgr->ShadowType());
+	
+	Ogre::Light* pointLight = mSceneMgr->createLight("pointLight");
+	pointLight->setType(Ogre::Light::LT_POINT);	
+	pointLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
+	pointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+	pointLight->setPosition(Ogre::Vector3(0, 100, 250));
 
-	//Ogre::Light* pointLight = mSceneMgr->createLight("pointLight");
-	//pointLight->setType(Ogre::Light::LT_POINT);	
-	//pointLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
-	//pointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
-	//pointLight->setPosition(Ogre::Vector3(0, 100, 250));
-
- 	Ogre::Light* dirLight = mSceneMgr->createLight("dirLight");
- 	dirLight->setType(Ogre::Light::LT_DIRECTIONAL);	
- 	dirLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
- 	dirLight->setSpecularColour(1.0f, 1.0f, 1.0f);
- 	dirLight->setDirection(Ogre::Vector3(-0.2f, -0.5f, -1));
+ 	//Ogre::Light* dirLight = mSceneMgr->createLight("dirLight");
+ 	//dirLight->setType(Ogre::Light::LT_DIRECTIONAL);	
+ 	//dirLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
+ 	//dirLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+ 	//dirLight->setDirection(Ogre::Vector3(-0.2f, -0.5f, -1));
 
 }
 
@@ -388,6 +388,15 @@ bool AppLogic::OISListener::keyPressed( const OIS::KeyEvent &arg )
 		break;
 	case OIS::KC_DOWN:
 		mParent->mCameraNode->pitch(Ogre::Degree(15));
+		break;
+	case OIS::KC_F1:
+		mParent->mCamera->setPolygonMode( Ogre::PM_SOLID );		
+		break;
+	case OIS::KC_F2:
+		mParent->mCamera->setPolygonMode( Ogre::PM_WIREFRAME );
+		break;
+	case OIS::KC_F3:
+		mParent->mCamera->setPolygonMode( Ogre::PM_POINTS );
 		break;
 	case OIS::KC_F9:
 		mParent->mStatsFrameListener->toogleDebugOverlay();
