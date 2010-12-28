@@ -26,8 +26,8 @@ public:
 	link errors when trying to use the Singleton-based class from
 	an outside dll.
 	*/
-	static ConfigurationManager& getSingleton(void) { assert( ms_Singleton ); return ( *ms_Singleton ); }
-	static ConfigurationManager* getSingletonPtr(void) { return ms_Singleton; }
+	static ConfigurationManager& getSingleton(void);
+	static ConfigurationManager* getSingletonPtr(void);
 private:
 	void setDefaults();
 

@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 #include "StatsFrameListener.h"		
 
+
 StatsFrameListener::StatsFrameListener(Ogre::RenderTarget *window)
 {
 	mWindow = window;

@@ -52,3 +52,13 @@ void ConfigurationManager::setDefaults()
 	mTextureFilter = Ogre::TFO_BILINEAR;
 	mAnisotropyLevel = 4;
 }
+
+ConfigurationManager& ConfigurationManager::getSingleton( void )
+{
+	assert( ms_Singleton ); return ( *ms_Singleton );
+}
+
+ConfigurationManager* ConfigurationManager::getSingletonPtr( void )
+{
+	return ms_Singleton;
+}

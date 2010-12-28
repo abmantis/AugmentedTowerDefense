@@ -20,6 +20,8 @@ AppLogic::AppLogic() : mApplication()
 	mSceneLoader		= NULL;
 	mEnemyMgr			= NULL;
 	mTowerMgr			= NULL;
+	mConfigMgr			= NULL;
+	mScoresMgr			= NULL;
 
 	mOISListener.mParent = this;
 }
@@ -49,6 +51,9 @@ bool AppLogic::init(void)
 	Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(mConfigMgr->AnisotropyLevel());
 
 	mColisionTools = new MOC::CollisionTools(mSceneMgr);
+
+	mScoresMgr = new ScoresManager(mApplication->getRenderWindow());
+
 	
 	
 	//webcam resolution
@@ -112,6 +117,12 @@ void AppLogic::shutdown(void)
 	mVideoDevice->shutdown();
 //	if(mVideoDevice) delete mVideoDevice;
 	mVideoDevice = NULL;
+
+	if(mConfigMgr) delete mConfigMgr;
+	mConfigMgr = NULL;
+
+	if(mScoresMgr) delete mScoresMgr;
+	mScoresMgr = NULL;
 
 	if(mColisionTools) delete mColisionTools;
 	mColisionTools = NULL;

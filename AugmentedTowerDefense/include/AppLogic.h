@@ -9,6 +9,7 @@
 #include "TowerManager.h"
 #include "CollisionTools.h"
 #include "ConfigurationManager.h"
+#include "ScoresManager.h"
 
 class OgreApp;
 class StatsFrameListener;
@@ -71,6 +72,7 @@ protected:
 	Ogre::AnimationState* mAnimState;
 	MOC::CollisionTools* mColisionTools;
 	ConfigurationManager* mConfigMgr;
+	ScoresManager* mScoresMgr;
 
 	StatsFrameListener *mStatsFrameListener;
 
