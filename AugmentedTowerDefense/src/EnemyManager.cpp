@@ -5,9 +5,10 @@
 //////////////////////////////////////////////////////////////////////////
 // Enemy class
 //////////////////////////////////////////////////////////////////////////
-Enemy::Enemy( Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath )
+Enemy::Enemy(int ID, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath )
 :mSceneMgr(sceneMgr), mWalkPath(walkPath)
 {
+	mID = ID;
 	mWalkToPos = 0;
 	mSpeed = 10;
 	mScale = 6;
@@ -21,6 +22,8 @@ Enemy::Enemy( Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath
 	mNode->setPosition(posi);
 	nextLocation();
 	mState = BORNING;
+
+	mEnergy = 5;
 }
 
 Enemy::~Enemy()
@@ -32,6 +35,8 @@ Enemy::~Enemy()
 
 void Enemy::update( Ogre::Real deltaTime )
 {
+	if(mState == DEFEATED) return;
+
 	Ogre::Real move = mSpeed * deltaTime;
 	mDistance -= move;
 
@@ -87,6 +92,12 @@ Ogre::Vector3 Enemy::getPosition()
 	return mNode->getPosition();
 }
 
+void Enemy::addShot()
+{
+	mEnergy--; 
+	if(mEnergy <= 0) mState = DEFEATED;
+}
+
 //////////////////////////////////////////////////////////////////////////
 // EnemyManager class
 //////////////////////////////////////////////////////////////////////////
@@ -97,6 +108,7 @@ EnemyManager::EnemyManager( Ogre::SceneManager *sceneMgr )
 	mTimeSinceLastEnemyBorn = 0;
 	mEnemiesBorn = 0;
 	mVisible = false;
+	mLastEnemyID = 0;
 }
 
 EnemyManager::~EnemyManager(void)
@@ -177,11 +189,14 @@ void EnemyManager::update( Ogre::Real deltaTime )
 
 void EnemyManager::createEnemy()
 {
-	Enemy* pEnemy = new Enemy(mSceneMgr, &mWalkPath);
+	Enemy* pEnemy = new Enemy(mLastEnemyID, mSceneMgr, &mWalkPath);
 	pEnemy->setVisible(mVisible);
 	mEnemyArray.push_back(pEnemy);
 	mEnemiesBorn++;
 	mTimeSinceLastEnemyBorn = 0;
+
+	mLastEnemyID++;
+	if(mLastEnemyID > 9999) mLastEnemyID = 0;
 }
 
 void EnemyManager::setVisible( bool visible )
@@ -197,9 +212,9 @@ void EnemyManager::setVisible( bool visible )
 	}	
 }
 
-std::vector<Ogre::Vector3> EnemyManager::getEnemyPos()
+std::vector<Enemy::IDPosPair> EnemyManager::getEnemyPos()
 {
-	std::vector<Ogre::Vector3> enemyPosVec;
+	std::vector<Enemy::IDPosPair> enemyIDPosVec;
 
 	EnemyArray::iterator it;
 	EnemyArray::iterator itBegin = mEnemyArray.begin();
@@ -208,9 +223,31 @@ std::vector<Ogre::Vector3> EnemyManager::getEnemyPos()
 	for(it = itBegin; it != itEnd; it++)
 	{
 		Enemy* pEnemy = (*it);
-		enemyPosVec.push_back(pEnemy->getPosition());
+		Enemy::IDPosPair pair;
+		pair.first = pEnemy->getID();
+		pair.second = pEnemy->getPosition();
+		enemyIDPosVec.push_back(pair);
 	}
-	return enemyPosVec;
+	return enemyIDPosVec;
+}
+
+void EnemyManager::addShotsToEnemies( std::vector<int> enemyIdVec )
+{
+	int iShootedEnemies = enemyIdVec.size();
+	EnemyArray::iterator it;
+	EnemyArray::iterator itBegin = mEnemyArray.begin();
+	EnemyArray::iterator itEnd = mEnemyArray.end();
+
+	for (int i = 0; i < iShootedEnemies; i++)
+	{
+		int iID = enemyIdVec[i];		
+		
+		for(it = itBegin; it != itEnd; it++)
+		{
+			Enemy* pEnemy = (*it);
+			if(pEnemy->getID() == iID) pEnemy->addShot();
+		}
+	}
 }
 
 

@@ -1,5 +1,6 @@
 #ifndef TowerManager_h__
 #define TowerManager_h__
+#include "EnemyManager.h"
 
 class Tower
 {	
@@ -7,7 +8,7 @@ public:
 	Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi);
 	~Tower();
 
-	void update(Ogre::Real deltaTime, std::vector<Ogre::Vector3>* enemyPosVec);
+	int update(Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDPos);
 	void setVisible(bool visible);
 private:
 
@@ -27,9 +28,10 @@ private:
 	class Shot
 	{
 	public:
-		Shot(Ogre::SceneManager* sceneMgr, Ogre::Vector3 startPos, Ogre::Vector3 enemyPos);
+		Shot(Ogre::SceneManager* sceneMgr, Ogre::Vector3 startPos, Ogre::Vector3 enemyPos, int enemyID);
 		~Shot();
 		bool update(Ogre::Real deltaTime);
+		int getEnemyID() { return mEnemyID; }
 	private:
 
 		Ogre::SceneManager* mSceneMgr;
@@ -38,6 +40,7 @@ private:
 		Ogre::Real mSpeed;
 		Ogre::Vector3 mDirection;
 		Ogre::Real mDistance;
+		int mEnemyID;
 	};
 };
 
@@ -48,7 +51,7 @@ public:
 	~TowerManager(void);
 
 	void init();
-	void update(Ogre::Real deltaTime, std::vector<Ogre::Vector3> *enemyPos);
+	std::vector<int> update(Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDPos);
 	void addTower(Ogre::Vector3 pos);
 	void setVisible(bool visible);
 	void show() { setVisible(true); }

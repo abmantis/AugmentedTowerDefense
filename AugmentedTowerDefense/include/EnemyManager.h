@@ -6,14 +6,17 @@
 class Enemy
 {
 public:
+	typedef std::pair<int, Ogre::Vector3> IDPosPair;
 	enum EnemyState { BORNING, ALIVE, DEFEATED, VICTORIOUS };
 public:
-	Enemy(Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath);
+	Enemy(int ID, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath);
 	~Enemy();
 	void update(Ogre::Real deltaTime);
 	void setVisible(bool visible) { mEntity->setVisible(visible); }
 	EnemyState getState() { return mState; }
 	Ogre::Vector3 getPosition();
+	int getID() {return mID;}
+	void addShot();
 
 private:
 	bool nextLocation(void);
@@ -29,6 +32,8 @@ private:
 	Ogre::Vector3 mDestination;            // The destination the object is moving towards
 	Ogre::Real mScale;
 	EnemyState mState;
+	int mID;
+	int mEnergy;
 };
 
 class EnemyManager
@@ -43,7 +48,8 @@ public:
 	void show() { setVisible(true); }
 	void hide() { setVisible(false); }
 
-	std::vector<Ogre::Vector3> getEnemyPos();
+	std::vector<Enemy::IDPosPair> getEnemyPos();
+	void addShotsToEnemies(std::vector<int> enemyIdVec);
 
 private:
 	void createEnemy();
@@ -57,6 +63,7 @@ private:
 	Ogre::Real mTimeSinceLastEnemyBorn;
 	bool mVisible;
 	int mEnemiesBorn;
+	int mLastEnemyID;
 
 };
 #endif // EnemyManager_h__

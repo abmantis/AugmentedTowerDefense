@@ -36,12 +36,22 @@ void TowerManager::init()
 	mSceneMgr->destroyEntity(ent);
 }
 
-void TowerManager::update( Ogre::Real deltaTime, std::vector<Ogre::Vector3> *enemyPos )
+// @param deltaTime: time since last call
+// @param enemyIDPos: vector of Enemy::IDPosPair representing the current enemies
+// 
+// @return: vector with the IDs of shooted enemies
+std::vector<int> TowerManager::update( Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDPos )
 {
+	std::vector<int> shootedEnemies;
+	int enemyID;
 	for(unsigned int i = 0; i < mTowerVec.size(); i++)
 	{
-		mTowerVec[i]->update(deltaTime, enemyPos);
+		if((enemyID = mTowerVec[i]->update(deltaTime, enemyIDPos)) > -1)
+		{
+			shootedEnemies.push_back(enemyID);
+		}
 	}
+	return shootedEnemies;
 }
 
 void TowerManager::addTower( Ogre::Vector3 pos )
@@ -104,12 +114,17 @@ Tower::~Tower()
 
 }
 
-void Tower::update( Ogre::Real deltaTime, std::vector<Ogre::Vector3>* enemyPosVec )
+// @param deltaTime: time since last call
+// @param enemyIDPos: vector of Enemy::IDPosPair representing the current enemies
+// 
+// @return: ID of shooted enemy (-1 if no enemy was shooted)
+int Tower::update( Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDAndPos)
 {	
 	Ogre::Vector3 towerPos = mBodyNode->getPosition();
-	int enemyCount = enemyPosVec->size();
+	int enemyCount = enemyIDAndPos->size();
 	Ogre::Real squaredDistance;
 	Ogre::Vector3 enemyPos;
+	int enemyID;
 	bool bHasEnemyToShoot = false;
 
 	mTimeSinceLastShot += deltaTime;
@@ -117,10 +132,12 @@ void Tower::update( Ogre::Real deltaTime, std::vector<Ogre::Vector3>* enemyPosVe
 
 	for(int i = 0; i < enemyCount; i++)
 	{
-		enemyPos = (*enemyPosVec)[i];
+		Enemy::IDPosPair pair = (*enemyIDAndPos)[i];		
+		enemyID = pair.first;
+		enemyPos = pair.second;
 		squaredDistance = towerPos.squaredDistance(enemyPos);
 		if(squaredDistance <= mMaxShootSquaredDistance)
-		{			
+		{		
 			bHasEnemyToShoot = true;
 			break;
 		}		
@@ -158,18 +175,21 @@ void Tower::update( Ogre::Real deltaTime, std::vector<Ogre::Vector3>* enemyPosVe
 				delete mShot;
 				mShot = NULL;
 			}
-			mShot = new Shot(mSceneMgr, gunWorldPos, enemyPos);
+			mShot = new Shot(mSceneMgr, gunWorldPos, enemyPos, enemyID);
 		}
 	}
 
 	if(mShot)
 	{
-		if(!mShot->update(deltaTime))
+		if(mShot->update(deltaTime))
 		{
+			int enemyID = mShot->getEnemyID();
 			delete mShot;
 			mShot = NULL;
+			return enemyID;
 		}
 	}
+	return -1;
 }
 
 void Tower::setVisible( bool visible )
@@ -183,12 +203,13 @@ void Tower::setVisible( bool visible )
 //////////////////////////////////////////////////////////////////////////
 // Tower::Shot class
 //////////////////////////////////////////////////////////////////////////
-Tower::Shot::Shot(Ogre::SceneManager* sceneMgr, Ogre::Vector3 startPos, Ogre::Vector3 enemyPos)
+Tower::Shot::Shot(Ogre::SceneManager* sceneMgr, Ogre::Vector3 startPos, Ogre::Vector3 enemyPos, int enemyID)
 {
 	mSpeed = 250;
 	mSceneMgr = sceneMgr;
 	mDirection = enemyPos - startPos;
 	mDistance = mDirection.normalise();
+	mEnemyID = enemyID;
 
 
 	mEntity = mSceneMgr->createEntity("Cylinderbullet.mesh");
@@ -214,9 +235,9 @@ bool Tower::Shot::update( Ogre::Real deltaTime )
 	Ogre::Real move = mSpeed * deltaTime;
 	mDistance -= move;
 
-	if(mDistance < 0) return false;
+	if(mDistance < 0) return true;
 
 	mNode->translate(mDirection * move);
 
-	return true;
+	return false;
 }

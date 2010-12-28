@@ -95,8 +95,11 @@ bool AppLogic::update(Ogre::Real deltaTime)
 		}
 	}
 
+	std::vector<int> shootedEnemies;
 	mEnemyMgr->update(deltaTime);
-	mTowerMgr->update(deltaTime, &(mEnemyMgr->getEnemyPos()));
+	shootedEnemies = mTowerMgr->update(deltaTime, &(mEnemyMgr->getEnemyPos()));
+	mEnemyMgr->addShotsToEnemies(shootedEnemies);
+
 
 //	HelperClass::Print(mCameraNode->getPosition());
 
