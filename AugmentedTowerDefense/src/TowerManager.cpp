@@ -62,8 +62,10 @@ bool TowerManager::addTower( Ogre::Vector3 pos )
 	int towerPrice = mScoresMgr->GetTowerPrice();
 	if(towerPrice <= mScoresMgr->GetPoints())
 	{
+		Ogre::Real shotTimeInterval = 2; //initially the towers fire every 2 seconds
+		shotTimeInterval -= (mScoresMgr->GetTowerLevel()-1)*0.1f;
 		mScoresMgr->ChangePoints(-towerPrice);
-		mTowerVec.push_back(new Tower(mSceneMgr, pos));
+		mTowerVec.push_back(new Tower(mSceneMgr, pos, shotTimeInterval));
 		return true;
 	}
 	else
@@ -89,12 +91,12 @@ void TowerManager::setVisible( bool visible )
 //////////////////////////////////////////////////////////////////////////
 // Tower class
 //////////////////////////////////////////////////////////////////////////
-Tower::Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi)
+Tower::Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi, Ogre::Real shotTimeInterval)
 : mSceneMgr(sceneMgr)
 {
 	mShot = NULL;
 	mTimeSinceLastShot = 0;
-	mShotRateTime = 2;
+	mShotTimeInterval = shotTimeInterval;
 	Ogre::int32 mask = AugmentedTowerDefense::MASK_TOWER;
 	mMaxShootSquaredDistance = 1700;
 
@@ -180,7 +182,7 @@ int Tower::update( Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDA
 		quat.FromAngleAxis(pitchAngle, Ogre::Vector3::UNIT_X);
 		mGunsNode->setOrientation(quat);
 
-		if(mTimeSinceLastShot > mShotRateTime)
+		if(mTimeSinceLastShot > mShotTimeInterval)
 		{
 			mTimeSinceLastShot = 0;
 			if(mShot)

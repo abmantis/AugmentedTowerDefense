@@ -34,11 +34,11 @@ void HUDManager::update()
 
 void HUDManager::updateScores()
 {
-	mScoresOverlays.guiEnergy->setCaption(		"Energy: "		+ Ogre::StringConverter::toString(mScoresOverlays.scoresManager->GetPlayerEnergy()));
-	mScoresOverlays.guiLevel->setCaption(		"Level: "		+ Ogre::StringConverter::toString(mScoresOverlays.scoresManager->GetLevel()));
-	mScoresOverlays.guiPoints->setCaption(		"Points: "		+ Ogre::StringConverter::toString(mScoresOverlays.scoresManager->GetPoints()));
-	mScoresOverlays.guiTowerPrice->setCaption(	"Tower Price: "	+ Ogre::StringConverter::toString(mScoresOverlays.scoresManager->GetTowerPrice()));
-	mScoresOverlays.guiTowerLevel->setCaption(	"Tower Level: "	+ Ogre::StringConverter::toString(mScoresOverlays.scoresManager->GetTowerLevel()));
+	mScoresOverlays.guiEnergy->setCaption(		"Energy: "			+ Ogre::StringConverter::toString(mScoresOverlays.scoresManager->GetPlayerEnergy()));
+	mScoresOverlays.guiLevel->setCaption(		"Level: "			+ Ogre::StringConverter::toString(mScoresOverlays.scoresManager->GetLevel()));
+	mScoresOverlays.guiPoints->setCaption(		"Points: "			+ Ogre::StringConverter::toString(mScoresOverlays.scoresManager->GetPoints()));
+	mScoresOverlays.guiTowerPrice->setCaption(	"Tower Price: "		+ Ogre::StringConverter::toString(mScoresOverlays.scoresManager->GetTowerPrice()));
+	mScoresOverlays.guiTowerLevel->setCaption(	"Tower Fire Rate: "	+ Ogre::StringConverter::toString(mScoresOverlays.scoresManager->GetTowerLevel()));
 }
 
 void HUDManager::showPopup( bool show, Ogre::String text )

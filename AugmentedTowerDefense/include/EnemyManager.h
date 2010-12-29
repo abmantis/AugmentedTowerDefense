@@ -9,7 +9,7 @@ class Enemy
 public:
 	typedef std::pair<int, Ogre::Vector3> IDPosPair;
 	enum EnemyState { BORNING, ALIVE, DEFEATED, VICTORIOUS };
-	enum EnemyType { NORMAL, LIFE, UPGRADE };
+	enum EnemyType { NORMAL, ENERGY, UPGRADE };
 public:
 	Enemy(int ID, EnemyType type, int energy, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath);
 	~Enemy();

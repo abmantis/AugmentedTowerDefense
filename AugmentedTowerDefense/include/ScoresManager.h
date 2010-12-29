@@ -19,7 +19,7 @@ public:
 
 	void ChangeEnergy( int energy ) { mPlayerEnergy += energy; }
 	void ChangePoints( int points ) { mPoints += points; }
-	void TowerLevelUp() { mTowerLevel++; mTowerPrice += 5; }
+	void TowerLevelUp() { mTowerLevel++; mTowerPrice += 2; }
 	void LevelUp() { mLevel++; }
 
 	/** Override standard Singleton retrieval.

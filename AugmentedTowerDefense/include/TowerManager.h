@@ -5,7 +5,7 @@
 class Tower
 {	
 public:
-	Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi);
+	Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi, Ogre::Real shotRateTime);
 	~Tower();
 
 	int update(Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDPos);
@@ -22,7 +22,7 @@ private:
 	Ogre::Entity *mGunsEntity;
 	Ogre::Real mMaxShootSquaredDistance;
 	Ogre::Real mTimeSinceLastShot;
-	Ogre::Real mShotRateTime;
+	Ogre::Real mShotTimeInterval;
 	Shot* mShot;
 
 	class Shot

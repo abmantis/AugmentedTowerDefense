@@ -19,7 +19,7 @@ Enemy::Enemy(int ID, EnemyType type, int energy, Ogre::SceneManager *sceneMgr, s
 	Ogre::String meshName = "";
 	switch(mType)
 	{
-	case LIFE:
+	case ENERGY:
 		meshName = "ATD_enemy_yellow.mesh";
 		break;
 	case UPGRADE:
@@ -177,10 +177,22 @@ void EnemyManager::update( Ogre::Real deltaTime )
 					itersToDelete.push(it);	// add iterator to delete list. it will be deleted later
 					break;
 				case Enemy::DEFEATED:
-					mScoresMgr->ChangePoints(1);
-					delete pEnemy;
-					pEnemy = NULL;
-					itersToDelete.push(it);	// add iterator to delete list. it will be deleted later
+					{
+						mScoresMgr->ChangePoints(1);
+						switch(pEnemy->getType())
+						{
+						case Enemy::ENERGY:
+							mScoresMgr->ChangeEnergy(1);
+							break;
+						case Enemy::UPGRADE:
+							mScoresMgr->TowerLevelUp();
+							break;
+						}
+
+						delete pEnemy;
+						pEnemy = NULL;
+						itersToDelete.push(it);	// add iterator to delete list. it will be deleted later
+					}					
 					break;
 				case Enemy::BORNING:
 				case Enemy::ALIVE:					
@@ -220,12 +232,12 @@ void EnemyManager::update( Ogre::Real deltaTime )
 
 void EnemyManager::createEnemy()
 {
-	int randType = rand()%10;
+	int randType = rand()%20;
 	Enemy::EnemyType type;
 	switch(randType)
 	{
-	case Enemy::LIFE:
-		type = Enemy::LIFE;
+	case Enemy::ENERGY:
+		type = Enemy::ENERGY;
 		break;
 	case Enemy::UPGRADE:
 		type = Enemy::UPGRADE;

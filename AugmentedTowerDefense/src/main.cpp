@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 	try 
 	{
 		/* initialize random seed: */
-		srand ( time(NULL) );
+		srand ( (unsigned int)time(NULL) );
 		OgreApp app;
 		AppLogic appLogic;
 		app.setAppLogic(&appLogic);
