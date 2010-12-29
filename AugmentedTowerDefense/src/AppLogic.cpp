@@ -324,17 +324,17 @@ void AppLogic::setupLights()
 // 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.0f, 0.0f, 0.0f));
 	mSceneMgr->setShadowTechnique(mConfigMgr->ShadowType());
 	
-	Ogre::Light* pointLight = mSceneMgr->createLight("pointLight");
-	pointLight->setType(Ogre::Light::LT_POINT);	
-	pointLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
-	pointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
-	pointLight->setPosition(Ogre::Vector3(0, 100, 250));
+	//Ogre::Light* pointLight = mSceneMgr->createLight("pointLight");
+	//pointLight->setType(Ogre::Light::LT_POINT);	
+	//pointLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
+	//pointLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+	//pointLight->setPosition(Ogre::Vector3(0, 150, 300));
 
- 	//Ogre::Light* dirLight = mSceneMgr->createLight("dirLight");
- 	//dirLight->setType(Ogre::Light::LT_DIRECTIONAL);	
- 	//dirLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
- 	//dirLight->setSpecularColour(1.0f, 1.0f, 1.0f);
- 	//dirLight->setDirection(Ogre::Vector3(-0.2f, -0.5f, -1));
+ 	Ogre::Light* dirLight = mSceneMgr->createLight("dirLight");
+ 	dirLight->setType(Ogre::Light::LT_DIRECTIONAL);	
+ 	dirLight->setDiffuseColour(0.7f, 0.7f, 0.7f);
+ 	dirLight->setSpecularColour(1.0f, 1.0f, 1.0f);
+ 	dirLight->setDirection(Ogre::Vector3(0.2f, 0.5f, -1));
 
 }
 

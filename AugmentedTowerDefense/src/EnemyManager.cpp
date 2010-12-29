@@ -14,17 +14,37 @@ Enemy::Enemy(int ID, EnemyType type, int energy, Ogre::SceneManager *sceneMgr, s
 	
 	mWalkToPos = 0;
 	mSpeed = 10;
-	mScale = 6;
+	mScale = 8;
+
+	Ogre::String meshName = "";
+	switch(mType)
+	{
+	case LIFE:
+		meshName = "ATD_enemy_yellow.mesh";
+		break;
+	case UPGRADE:
+		meshName = "ATD_enemy_blue.mesh";
+			break;
+	default:
+		meshName = "ATD_enemy_red.mesh";
+		break;
+	}
+
 	
-	mEntity = mSceneMgr->createEntity("atd_cube.mesh");
+	mEntity = mSceneMgr->createEntity(meshName);
 	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 	mNode->attachObject(mEntity);
-	mNode->setScale(mScale, mScale, mScale);
+	mNode->setScale(mScale, mScale, mScale*2);
 	Ogre::Vector3 posi = (*mWalkPath)[0];
-	posi.z = mEntity->getBoundingBox().getSize().z * mScale * 0.5f;
+	//posi.z = mEntity->getBoundingBox().getSize().z * mScale * 0.5f;
 	mNode->setPosition(posi);
 	nextLocation();
 	mState = BORNING;
+
+	mHeight = mEntity->getBoundingBox().getMaximum().z*mScale;
+
+	
+	
 }
 
 Enemy::~Enemy()
@@ -44,7 +64,7 @@ void Enemy::update( Ogre::Real deltaTime )
 	if (mDistance <= 0.0f)
 	{                 
 		mNode->setPosition(mDestination);
-		mDirection = Ogre::Vector3::ZERO;				
+		mDirection = Ogre::Vector3::ZERO;
 
 		if (!nextLocation())
 		{
@@ -70,16 +90,14 @@ void Enemy::update( Ogre::Real deltaTime )
 		mNode->translate(mDirection * move);
 	} 
 
-//	mNode->yaw(Ogre::Degree(deltaTime * 200));
-	mNode->roll(Ogre::Degree(deltaTime * 400));
-//	mNode->pitch(Ogre::Degree(deltaTime * 500));
+	mNode->roll(Ogre::Degree(deltaTime * 100));
 }
 
 bool Enemy::nextLocation(void){
 	if (mWalkPath->size() == mWalkToPos) return false;
 
 	mDestination = (*mWalkPath)[mWalkToPos];
-	mDestination.z = mEntity->getBoundingBox().getSize().z * mScale * 0.5f;
+//	mDestination.z = mEntity->getBoundingBox().getSize().z * mScale * 0.5f;
 	mDirection = mDestination - mNode->getPosition();
 	mDistance = mDirection.normalise();
 
@@ -106,7 +124,7 @@ EnemyManager::EnemyManager( Ogre::SceneManager *sceneMgr )
 : mSceneMgr(sceneMgr)
 {	
 	mTimeSinceLastWave = 0;	
-	mTimeSinceLastEnemyBorn = 0;
+	mTimeSinceLastEnemyBorn = 999;
 	mEnemiesBorn = 0;
 	mVisible = false;
 	mLastEnemyID = 0;
@@ -217,7 +235,7 @@ void EnemyManager::createEnemy()
 		break;
 	}
 
-	Enemy* pEnemy = new Enemy(mLastEnemyID, type, mCurrentEnemyEnergy,mSceneMgr, &mWalkPath);
+	Enemy* pEnemy = new Enemy(mLastEnemyID, type, mCurrentEnemyEnergy, mSceneMgr, &mWalkPath);
 	pEnemy->setVisible(mVisible);
 	mEnemyArray.push_back(pEnemy);
 	mEnemiesBorn++;
@@ -254,6 +272,7 @@ std::vector<Enemy::IDPosPair> EnemyManager::getEnemyPos()
 		Enemy::IDPosPair pair;
 		pair.first = pEnemy->getID();
 		pair.second = pEnemy->getPosition();
+		pair.second.z += pEnemy->getHeight();
 		enemyIDPosVec.push_back(pair);
 	}
 	return enemyIDPosVec;

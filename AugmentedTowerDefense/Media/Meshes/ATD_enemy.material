@@ -1,0 +1,152 @@
+material 1_Blinds_Roman_Hobbled_Blue
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1
+      diffuse 1 1 1
+      specular 1 1 1
+      emissive 0.0 0.0 0.0
+      // texture size: 12.0, 24.0
+      texture_unit
+      {
+        texture 2_Blinds_Roman_Hobbled_Blue.jpg
+      }
+    }
+  }
+}
+material 2_Blinds_Vertical_Pattern
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1
+      diffuse 1 1 1
+      specular 1 1 1
+      emissive 0.0 0.0 0.0
+      // texture size: 6.5, 6.5
+      texture_unit
+      {
+        texture 3_Blinds_Vertical_Pattern.jpg
+      }
+    }
+  }
+}
+material 3_[Blinds_Cellular_White]2
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1
+      diffuse 1 1 1
+      specular 1 1 1
+      emissive 0.0 0.0 0.0
+      // texture size: 18.0, 18.0
+      texture_unit
+      {
+        texture 4_Blinds_Cellular_White.jpg
+      }
+    }
+  }
+}
+material 4_Blinds_Cellular_Red
+{
+  technique
+  {
+    pass
+    {
+       ambient 1 1 1
+      diffuse 1 1 1
+      specular 1 1 1
+      emissive 0.0 0.0 0.0
+      // texture size: 39.3700787401575, 39.3700787401575
+      texture_unit
+      {
+        texture 5_Blinds_Cellular_Red.jpg
+      }
+    }
+  }
+}
+material 4_Blinds_Cellular_Blue
+{
+  technique
+  {
+    pass
+    {
+       ambient 1 1 1
+      diffuse 1 1 1
+      specular 1 1 1
+      emissive 0.0 0.0 0.0
+      // texture size: 39.3700787401575, 39.3700787401575
+      texture_unit
+      {
+        texture 5_Blinds_Cellular_Blue.jpg
+      }
+    }
+  }
+}
+material 4_Blinds_Cellular_Yellow
+{
+  technique
+  {
+    pass
+    {
+       ambient 1 1 1
+      diffuse 1 1 1
+      specular 1 1 1
+      emissive 0.0 0.0 0.0
+      // texture size: 39.3700787401575, 39.3700787401575
+      texture_unit
+      {
+        texture 5_Blinds_Cellular_Yellow.jpg
+      }
+    }
+  }
+}
+material 5_black
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.0 0.0 0.0
+      diffuse 0.0 0.0 0.0
+      specular 0.0 0.0 0.0 15.0
+      emissive 0.0 0.0 0.0
+    }
+  }
+}
+material 6_Blinds_Cellular_White
+{
+  technique
+  {
+    pass
+    {
+      ambient 1 1 1
+      diffuse 1 1 1
+      specular 1 1 1
+      emissive 0.0 0.0 0.0
+      // texture size: 18.0, 18.0
+      texture_unit
+      {
+        texture 1_Blinds_Cellular_White.jpg
+      }
+    }
+  }
+}
+material SketchupDefault
+{
+  technique
+  {
+    pass
+    {
+      ambient 0.8 0.8 0.8
+      diffuse 0.8 0.8 0.8
+      specular 0.96 0.96 0.96 15.0
+      emissive 0.0 0.0 0.0
+    }
+  }
+}

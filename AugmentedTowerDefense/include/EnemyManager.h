@@ -20,6 +20,7 @@ public:
 	int getID() {return mID;}
 	void addShot();
 	EnemyType getType() { return mType; }
+	Ogre::Real getHeight() { return mHeight; }
 
 private:
 	bool nextLocation(void);
@@ -38,6 +39,7 @@ private:
 	int mID;
 	int mEnergy;
 	EnemyType mType;
+	Ogre::Real mHeight;
 	
 };
 
