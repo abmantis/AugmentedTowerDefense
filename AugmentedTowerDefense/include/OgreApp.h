@@ -14,6 +14,7 @@ public:
 	void setAppLogic(AppLogic *appLogic);
 
 	void run(void);
+	bool preUpdate(Ogre::Real deltaTime);
 	bool update(Ogre::Real deltaTime);
 	void notifyWindowMetrics(Ogre::RenderWindow* rw, int left, int top, int width, int height);
 	void notifyWindowClosed(Ogre::RenderWindow* rw);

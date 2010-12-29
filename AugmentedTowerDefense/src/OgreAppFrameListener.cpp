@@ -49,7 +49,13 @@ void OgreAppFrameListener::windowClosed(Ogre::RenderWindow* rw)
 }
 
 // Override frameStarted event to process that (don't care about frameEnded)
-//bool OgreAppFrameListener::frameStarted(const FrameEvent& evt)
+bool OgreAppFrameListener::frameStarted(const Ogre::FrameEvent& evt)
+{
+	if(!mApplication->preUpdate(evt.timeSinceLastFrame))
+		return false;
+
+	return true;
+}
 bool OgreAppFrameListener::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
 	if(mWindowClosed)

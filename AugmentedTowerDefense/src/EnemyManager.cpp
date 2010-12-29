@@ -5,10 +5,11 @@
 //////////////////////////////////////////////////////////////////////////
 // Enemy class
 //////////////////////////////////////////////////////////////////////////
-Enemy::Enemy(int ID, int energy, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath )
+Enemy::Enemy(int ID, EnemyType type, int energy, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath )
 :mSceneMgr(sceneMgr), mWalkPath(walkPath)
 {
 	mID = ID;
+	mType = type;
 	mEnergy = energy;
 	
 	mWalkToPos = 0;
@@ -201,7 +202,22 @@ void EnemyManager::update( Ogre::Real deltaTime )
 
 void EnemyManager::createEnemy()
 {
-	Enemy* pEnemy = new Enemy(mLastEnemyID, mCurrentEnemyEnergy,mSceneMgr, &mWalkPath);
+	int randType = rand()%10;
+	Enemy::EnemyType type;
+	switch(randType)
+	{
+	case Enemy::LIFE:
+		type = Enemy::LIFE;
+		break;
+	case Enemy::UPGRADE:
+		type = Enemy::UPGRADE;
+		break;
+	default:
+		type = Enemy::NORMAL;
+		break;
+	}
+
+	Enemy* pEnemy = new Enemy(mLastEnemyID, type, mCurrentEnemyEnergy,mSceneMgr, &mWalkPath);
 	pEnemy->setVisible(mVisible);
 	mEnemyArray.push_back(pEnemy);
 	mEnemiesBorn++;

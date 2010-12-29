@@ -6,7 +6,7 @@
 class ScoresManager : public Ogre::Singleton<ScoresManager>
 {
 public:
-	ScoresManager(Ogre::RenderTarget *window);
+	ScoresManager();
 	~ScoresManager();
 
 	void update();
@@ -46,6 +46,5 @@ private:
 	int mLevel;
 
 	Ogre::Overlay* mDebugOverlay;
-	Ogre::RenderTarget *mWindow;
 };
 #endif // ScoresManager_h__

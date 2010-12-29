@@ -9,8 +9,9 @@ class Enemy
 public:
 	typedef std::pair<int, Ogre::Vector3> IDPosPair;
 	enum EnemyState { BORNING, ALIVE, DEFEATED, VICTORIOUS };
+	enum EnemyType { NORMAL, LIFE, UPGRADE };
 public:
-	Enemy(int ID, int energy, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath);
+	Enemy(int ID, EnemyType type, int energy, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath);
 	~Enemy();
 	void update(Ogre::Real deltaTime);
 	void setVisible(bool visible) { mEntity->setVisible(visible); }
@@ -18,6 +19,7 @@ public:
 	Ogre::Vector3 getPosition();
 	int getID() {return mID;}
 	void addShot();
+	EnemyType getType() { return mType; }
 
 private:
 	bool nextLocation(void);
@@ -35,6 +37,8 @@ private:
 	EnemyState mState;
 	int mID;
 	int mEnergy;
+	EnemyType mType;
+	
 };
 
 class EnemyManager

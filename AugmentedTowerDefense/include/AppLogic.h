@@ -10,6 +10,7 @@
 #include "CollisionTools.h"
 #include "ConfigurationManager.h"
 #include "ScoresManager.h"
+#include "HUDManager.h"
 
 class OgreApp;
 class StatsFrameListener;
@@ -48,13 +49,14 @@ protected:
 	void createScene(void);
 	void setupLights();
 	
-	bool processInputs(Ogre::Real deltaTime);
-
 	void initTracking(int &width, int &height);
 	void createWebcamPlane(int width, int height, Ogre::Real _distanceFromCamera);
 
 	void hideScene();
 	void showScene();
+
+	void end() { mContinue = false; }
+	void pause(bool pause);
 
 
 	OgreApp *mApplication;
@@ -73,8 +75,11 @@ protected:
 	MOC::CollisionTools* mColisionTools;
 	ConfigurationManager* mConfigMgr;
 	ScoresManager* mScoresMgr;
-
+	HUDManager* mHUDMgr;
 	StatsFrameListener *mStatsFrameListener;
+
+	bool mContinue;
+	bool mGamePaused;
 
 	// OIS
 	class OISListener : public OIS::MouseListener, public OIS::KeyListener

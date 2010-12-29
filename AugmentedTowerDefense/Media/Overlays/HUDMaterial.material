@@ -1,0 +1,52 @@
+material HUDMaterial/StatsBlockBorder
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend alpha_blend
+			depth_check off
+
+			texture_unit
+			{
+				texture HUD_Border.png
+			}
+		}
+	}
+}
+material HUDMaterial/StatsBlockCenter
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend alpha_blend
+			depth_check off
+
+			texture_unit
+			{
+				texture HUD_Border_Center.png
+			}
+		}
+	}
+}
+
+material HUDMaterial/StatsBreak
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+			scene_blend alpha_blend
+			depth_check off
+
+			texture_unit
+			{
+				texture HUD_Border_Break.png
+			}
+		}
+	}
+}

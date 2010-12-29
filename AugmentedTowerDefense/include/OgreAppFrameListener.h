@@ -18,8 +18,7 @@ public:
 	//Unattach OIS before window shutdown (very important under Linux)
 	virtual void windowClosed(Ogre::RenderWindow* rw);
 
-	// Override frameStarted event to process that (don't care about frameEnded)
-	//bool frameStarted(const Ogre::FrameEvent& evt);
+	bool frameStarted(const Ogre::FrameEvent& evt);
 	bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 
 protected:

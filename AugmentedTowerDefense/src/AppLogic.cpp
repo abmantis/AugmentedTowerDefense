@@ -22,8 +22,12 @@ AppLogic::AppLogic() : mApplication()
 	mTowerMgr			= NULL;
 	mConfigMgr			= NULL;
 	mScoresMgr			= NULL;
+	mHUDMgr				= NULL;
 
 	mOISListener.mParent = this;
+
+	mContinue = true;
+	mGamePaused = true;
 }
 
 AppLogic::~AppLogic()
@@ -45,6 +49,8 @@ bool AppLogic::init(void)
 	createViewport();
 	createCamera();
 	setupLights();
+	
+	mScoresMgr = new ScoresManager();
 	createScene();
 
 	Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(mConfigMgr->TextureFilter());
@@ -52,13 +58,13 @@ bool AppLogic::init(void)
 
 	mColisionTools = new MOC::CollisionTools(mSceneMgr);
 	
-	
 	//webcam resolution
-	int width;
-	int height;
-
+	int width, height;
 	initTracking(width, height);
 	createWebcamPlane(width, height, 4500.0f);	
+
+	mHUDMgr = new HUDManager();
+	mHUDMgr->init();
 
 	mStatsFrameListener = new StatsFrameListener(mApplication->getRenderWindow());
 	mApplication->getOgreRoot()->addFrameListener(mStatsFrameListener);
@@ -67,16 +73,22 @@ bool AppLogic::init(void)
 	mApplication->getKeyboard()->setEventCallback(&mOISListener);
 	mApplication->getMouse()->setEventCallback(&mOISListener);
 
+
+	mHUDMgr->showPopup(true, "Press SPACE to start");
+
 	return true;
 }
 
 bool AppLogic::preUpdate(Ogre::Real deltaTime)
 {
+	if(mApplication->getRenderWindow()->isActive() == false) pause(true);
 	return true;
 }
 
 bool AppLogic::update(Ogre::Real deltaTime)
 {
+	if(!mContinue) return false;
+
 	//If there is a new frame available on video device
 	if (mVideoDevice->update())
 	{
@@ -97,18 +109,17 @@ bool AppLogic::update(Ogre::Real deltaTime)
 		}
 	}
 
-	std::vector<int> shootedEnemies;
-	mEnemyMgr->update(deltaTime);
-	shootedEnemies = mTowerMgr->update(deltaTime, &(mEnemyMgr->getEnemyPos()));
-	mEnemyMgr->addShotsToEnemies(shootedEnemies);
+	if(!mGamePaused)
+	{
+		std::vector<int> shootedEnemies;
+		mEnemyMgr->update(deltaTime);
+		shootedEnemies = mTowerMgr->update(deltaTime, &(mEnemyMgr->getEnemyPos()));
+		mEnemyMgr->addShotsToEnemies(shootedEnemies);
+	}
 
-	mScoresMgr->update();
+	mHUDMgr->update();
 
-
-//	HelperClass::Print(mCameraNode->getPosition());
-
-	bool result = processInputs(deltaTime);
-	return result;
+	return true;
 }
 
 void AppLogic::shutdown(void)
@@ -116,6 +127,9 @@ void AppLogic::shutdown(void)
 	mVideoDevice->shutdown();
 //	if(mVideoDevice) delete mVideoDevice;
 	mVideoDevice = NULL;
+
+	if(mHUDMgr) delete mHUDMgr;
+	mHUDMgr = NULL;
 
 	if(mConfigMgr) delete mConfigMgr;
 	mConfigMgr = NULL;
@@ -188,8 +202,6 @@ void AppLogic::createScene(void)
 	Ogre::Entity::setDefaultQueryFlags(AugmentedTowerDefense::MASK_DEFAULT);
 	mSceneMgr->setSkyBox(true, "Examples/Grid");
 
-	mScoresMgr = new ScoresManager(mApplication->getRenderWindow());
-
 	mSceneLoader = new SceneLoader(mSceneMgr);
 	mSceneLoader->init();
 	mSceneLoader->hide();
@@ -207,7 +219,6 @@ void AppLogic::createScene(void)
 	mTowerMgr = new TowerManager(mSceneMgr);
 	mTowerMgr->init();
 	mTowerMgr->hide();
-
 
 // 	Ogre::Real scale = 10;
 // 	Ogre::Entity* ent = mSceneMgr->createEntity("Sinbad.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
@@ -341,18 +352,14 @@ void AppLogic::showScene()
 	mTowerMgr->show();
 }
 
-//--------------------------------- Inputs --------------------------------
-
-bool AppLogic::processInputs(Ogre::Real deltaTime)
+void AppLogic::pause( bool pause )
 {
-	OIS::Keyboard *keyboard = mApplication->getKeyboard();
-	if(keyboard->isKeyDown(OIS::KC_ESCAPE))
-	{
-		return false;
-	}
-
-	return true;
+	mGamePaused = pause; 
+	if(mGamePaused) mHUDMgr->showPopup(true, "Press SPACE to continue");
+	else mHUDMgr->showPopup(false, "");
 }
+
+//--------------------------------- Inputs --------------------------------
 
 bool AppLogic::OISListener::mouseMoved( const OIS::MouseEvent &arg )
 {
@@ -366,6 +373,8 @@ bool AppLogic::OISListener::mousePressed( const OIS::MouseEvent &arg, OIS::Mouse
 
 bool AppLogic::OISListener::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 {
+	if(mParent->mGamePaused) return true;
+
 	Ogre::Vector2 mouseCoords((float)arg.state.X.abs,(float)arg.state.Y.abs * 1.0f);
 	Ogre::Entity *pWallTarget = NULL;
 	float closestDist;
@@ -398,12 +407,13 @@ bool AppLogic::OISListener::keyPressed( const OIS::KeyEvent &arg )
 {
 	switch (arg.key)
 	{
-	case OIS::KC_UP:
-		mParent->mCameraNode->yaw(Ogre::Degree(15));
+	case OIS::KC_ESCAPE:
+		mParent->end();
 		break;
-	case OIS::KC_DOWN:
-		mParent->mCameraNode->pitch(Ogre::Degree(15));
-		break;
+	case OIS::KC_SPACE:
+		mParent->pause(!mParent->mGamePaused);		
+		break;	
+
 	case OIS::KC_F1:
 		mParent->mCamera->setPolygonMode( Ogre::PM_SOLID );		
 		break;

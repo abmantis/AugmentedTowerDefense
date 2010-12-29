@@ -204,6 +204,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\HUDManager.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\main.cpp"
 				>
 			</File>
@@ -222,6 +226,13 @@
 			<File
 				RelativePath=".\src\ScoresManager.cpp"
 				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\src\SharedStuff.cpp"
@@ -287,6 +298,10 @@
 			</File>
 			<File
 				RelativePath=".\include\EnemyManager.h"
+				>
+			</File>
+			<File
+				RelativePath=".\include\HUDManager.h"
 				>
 			</File>
 			<File

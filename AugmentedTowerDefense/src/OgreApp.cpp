@@ -78,6 +78,10 @@ void OgreApp::run(void)
 	shutdown();
 }
 
+bool OgreApp::preUpdate( Ogre::Real deltaTime )
+{
+	return mAppLogic->preUpdate(deltaTime);
+}
 
 bool OgreApp::update(Ogre::Real deltaTime)
 {
