@@ -51,9 +51,6 @@ bool AppLogic::init(void)
 	Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(mConfigMgr->AnisotropyLevel());
 
 	mColisionTools = new MOC::CollisionTools(mSceneMgr);
-
-	mScoresMgr = new ScoresManager(mApplication->getRenderWindow());
-
 	
 	
 	//webcam resolution
@@ -104,6 +101,8 @@ bool AppLogic::update(Ogre::Real deltaTime)
 	mEnemyMgr->update(deltaTime);
 	shootedEnemies = mTowerMgr->update(deltaTime, &(mEnemyMgr->getEnemyPos()));
 	mEnemyMgr->addShotsToEnemies(shootedEnemies);
+
+	mScoresMgr->update();
 
 
 //	HelperClass::Print(mCameraNode->getPosition());
@@ -188,6 +187,8 @@ void AppLogic::createScene(void)
 {
 	Ogre::Entity::setDefaultQueryFlags(AugmentedTowerDefense::MASK_DEFAULT);
 	mSceneMgr->setSkyBox(true, "Examples/Grid");
+
+	mScoresMgr = new ScoresManager(mApplication->getRenderWindow());
 
 	mSceneLoader = new SceneLoader(mSceneMgr);
 	mSceneLoader->init();

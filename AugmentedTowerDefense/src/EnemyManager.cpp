@@ -5,10 +5,12 @@
 //////////////////////////////////////////////////////////////////////////
 // Enemy class
 //////////////////////////////////////////////////////////////////////////
-Enemy::Enemy(int ID, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath )
+Enemy::Enemy(int ID, int energy, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath )
 :mSceneMgr(sceneMgr), mWalkPath(walkPath)
 {
 	mID = ID;
+	mEnergy = energy;
+	
 	mWalkToPos = 0;
 	mSpeed = 10;
 	mScale = 6;
@@ -22,8 +24,6 @@ Enemy::Enemy(int ID, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *w
 	mNode->setPosition(posi);
 	nextLocation();
 	mState = BORNING;
-
-	mEnergy = 5;
 }
 
 Enemy::~Enemy()
@@ -109,6 +109,8 @@ EnemyManager::EnemyManager( Ogre::SceneManager *sceneMgr )
 	mEnemiesBorn = 0;
 	mVisible = false;
 	mLastEnemyID = 0;
+	mCurrentEnemyEnergy = 5;
+	mScoresMgr = NULL;
 }
 
 EnemyManager::~EnemyManager(void)
@@ -118,6 +120,8 @@ EnemyManager::~EnemyManager(void)
 void EnemyManager::init( std::vector<Ogre::Vector3> walkPath )
 {
 	mWalkPath = walkPath;
+
+	mScoresMgr = ScoresManager::getSingletonPtr();
 
 	// set mVisible = true so that setVisible will process and change mVisible to false :)
 	mVisible = true;
@@ -131,7 +135,7 @@ void EnemyManager::update( Ogre::Real deltaTime )
 		mTimeSinceLastWave += deltaTime;
 	}
 	else
-	{
+	{		
 		EnemyArray::iterator it;
 		EnemyArray::iterator itBegin = mEnemyArray.begin();
 		EnemyArray::iterator itEnd = mEnemyArray.end();
@@ -148,7 +152,13 @@ void EnemyManager::update( Ogre::Real deltaTime )
 				switch (pEnemy->getState())
 				{
 				case Enemy::VICTORIOUS:
+					mScoresMgr->ChangeEnergy(-1);
+					delete pEnemy;
+					pEnemy = NULL;
+					itersToDelete.push(it);	// add iterator to delete list. it will be deleted later
+					break;
 				case Enemy::DEFEATED:
+					mScoresMgr->ChangePoints(1);
 					delete pEnemy;
 					pEnemy = NULL;
 					itersToDelete.push(it);	// add iterator to delete list. it will be deleted later
@@ -173,7 +183,9 @@ void EnemyManager::update( Ogre::Real deltaTime )
 				// The array is empty and all enemies have already born? Start next round!
 				mTimeSinceLastWave = 0;
 				mEnemiesBorn = 0;
-				mTimeSinceLastEnemyBorn = 1.1f;
+				mTimeSinceLastEnemyBorn = 9999;
+				mCurrentEnemyEnergy += rand()%5 + 1 ; // increases the energy by a value between 1 and 5
+				mScoresMgr->LevelUp();
 				return;
 			}
 		}
@@ -189,7 +201,7 @@ void EnemyManager::update( Ogre::Real deltaTime )
 
 void EnemyManager::createEnemy()
 {
-	Enemy* pEnemy = new Enemy(mLastEnemyID, mSceneMgr, &mWalkPath);
+	Enemy* pEnemy = new Enemy(mLastEnemyID, mCurrentEnemyEnergy,mSceneMgr, &mWalkPath);
 	pEnemy->setVisible(mVisible);
 	mEnemyArray.push_back(pEnemy);
 	mEnemiesBorn++;

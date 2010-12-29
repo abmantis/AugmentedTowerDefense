@@ -6,8 +6,8 @@ ScorsOverlay
 	{
 		metrics_mode pixels
 		vert_align top
-		horz_align right
-		left 225 
+		horz_align left
+		left 5
 		top 5
 		width 220
 		height 102
@@ -72,7 +72,7 @@ ScorsOverlay
 			colour_top 0.5 0.7 0.5
 			colour_bottom 0.3 0.5 0.3
 		}
-		element TextArea(UpgradePoints)
+		element TextArea(TowerPrice)
 		{
 			metrics_mode pixels
 			left 5
@@ -81,7 +81,7 @@ ScorsOverlay
 			height 30
 			font_name BlueHighway
 			char_height 16
-			caption Upgrade Points:
+			caption Tower Price:
 			colour_top 0.5 0.7 0.5
 			colour_bottom 0.3 0.5 0.3
 		}

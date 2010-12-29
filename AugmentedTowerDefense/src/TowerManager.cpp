@@ -9,6 +9,7 @@ TowerManager::TowerManager( Ogre::SceneManager *sceneMgr )
 : mSceneMgr(sceneMgr)
 {
  	mVisible = false;
+	mScoresMgr = NULL;
 }
 
 TowerManager::~TowerManager( void )
@@ -22,6 +23,8 @@ TowerManager::~TowerManager( void )
 
 void TowerManager::init()
 {
+	mScoresMgr = ScoresManager::getSingletonPtr();
+
 	// set mVisible = true so that setVisible will process and change mVisible to false :)
 	mVisible = true;
 	setVisible(false);
@@ -54,9 +57,19 @@ std::vector<int> TowerManager::update( Ogre::Real deltaTime, std::vector<Enemy::
 	return shootedEnemies;
 }
 
-void TowerManager::addTower( Ogre::Vector3 pos )
+bool TowerManager::addTower( Ogre::Vector3 pos )
 {
-	mTowerVec.push_back(new Tower(mSceneMgr, pos));
+	int towerPrice = mScoresMgr->GetTowerPrice();
+	if(towerPrice <= mScoresMgr->GetPoints())
+	{
+		mScoresMgr->ChangePoints(-towerPrice);
+		mTowerVec.push_back(new Tower(mSceneMgr, pos));
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void TowerManager::setVisible( bool visible )

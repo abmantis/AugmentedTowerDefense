@@ -2,6 +2,7 @@
 #define EnemyManager_h__
 
 #pragma once
+#include "ScoresManager.h"
 
 class Enemy
 {
@@ -9,7 +10,7 @@ public:
 	typedef std::pair<int, Ogre::Vector3> IDPosPair;
 	enum EnemyState { BORNING, ALIVE, DEFEATED, VICTORIOUS };
 public:
-	Enemy(int ID, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath);
+	Enemy(int ID, int energy, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath);
 	~Enemy();
 	void update(Ogre::Real deltaTime);
 	void setVisible(bool visible) { mEntity->setVisible(visible); }
@@ -64,6 +65,8 @@ private:
 	bool mVisible;
 	int mEnemiesBorn;
 	int mLastEnemyID;
+	int mCurrentEnemyEnergy;
+	ScoresManager* mScoresMgr;
 
 };
 #endif // EnemyManager_h__

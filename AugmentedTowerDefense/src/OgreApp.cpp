@@ -55,7 +55,6 @@ bool OgreApp::init(void)
 
 		setupResources();
 
-		// le frame listener prévient l'application de la taille de la fenetre
 		mFrameListener = new OgreAppFrameListener(this);
 		mRoot->addFrameListener(mFrameListener);
 

@@ -11,7 +11,7 @@ ScoresManager::ScoresManager(Ogre::RenderTarget *window)
 	mTowerPrice = 5;
 	mPoints = 10;
 	mTowerLevel = 1;
-	mLevel = 0;
+	mLevel = 1;
 
 	mDebugOverlay->show();
 }
@@ -32,32 +32,26 @@ ScoresManager* ScoresManager::getSingletonPtr( void )
 
 void ScoresManager::update()
 {
-	static Ogre::String currFps = "Current FPS: ";
-	static Ogre::String avgFps = "Average FPS: ";
-	static Ogre::String bestFps = "Best FPS: ";
-	static Ogre::String worstFps = "Worst FPS: ";
-	static Ogre::String tris = "Triangle Count: ";
-	static Ogre::String batches = "Batch Count: ";
+	static Ogre::String energy = "Energy: ";
+	static Ogre::String level = "Level: ";
+	static Ogre::String points = "Points: ";
+	static Ogre::String towerPrice = "Tower Price: ";
+	static Ogre::String towerLevel = "Tower Level: ";
 
 
-	Ogre::OverlayElement* guiAvg = Ogre::OverlayManager::getSingleton().getOverlayElement("Core/AverageFps");
-	Ogre::OverlayElement* guiCurr = Ogre::OverlayManager::getSingleton().getOverlayElement("Core/CurrFps");
-	Ogre::OverlayElement* guiBest = Ogre::OverlayManager::getSingleton().getOverlayElement("Core/BestFps");
-	Ogre::OverlayElement* guiWorst = Ogre::OverlayManager::getSingleton().getOverlayElement("Core/WorstFps");
+	Ogre::OverlayElement* guiEnergy = Ogre::OverlayManager::getSingleton().getOverlayElement("Energy");
+	Ogre::OverlayElement* guiLevel = Ogre::OverlayManager::getSingleton().getOverlayElement("Level");
+	Ogre::OverlayElement* guiPoints = Ogre::OverlayManager::getSingleton().getOverlayElement("Points");
+	Ogre::OverlayElement* guiTowerPrice = Ogre::OverlayManager::getSingleton().getOverlayElement("TowerPrice");
+	Ogre::OverlayElement* guiTowerLevel = Ogre::OverlayManager::getSingleton().getOverlayElement("TowerLevel");
 
-	const Ogre::RenderTarget::FrameStats& stats = mWindow->getStatistics();
-	guiAvg->setCaption(avgFps + Ogre::StringConverter::toString(stats.avgFPS));
-	guiCurr->setCaption(currFps + Ogre::StringConverter::toString(stats.lastFPS));
-	guiBest->setCaption(bestFps + Ogre::StringConverter::toString(stats.bestFPS)
-		+" "+ Ogre::StringConverter::toString(stats.bestFrameTime)+" ms");
-	guiWorst->setCaption(worstFps + Ogre::StringConverter::toString(stats.worstFPS)
-		+" "+ Ogre::StringConverter::toString(stats.worstFrameTime)+" ms");
+	guiEnergy->setCaption(energy + Ogre::StringConverter::toString(mPlayerEnergy));
+	guiLevel->setCaption(level + Ogre::StringConverter::toString(mLevel));
+	guiPoints->setCaption(points + Ogre::StringConverter::toString(mPoints));
+	guiTowerPrice->setCaption(towerPrice + Ogre::StringConverter::toString(mTowerPrice));
+	guiTowerLevel->setCaption(towerLevel + Ogre::StringConverter::toString(mTowerLevel));
 
-	Ogre::OverlayElement* guiTris = Ogre::OverlayManager::getSingleton().getOverlayElement("Core/NumTris");
-	guiTris->setCaption(tris + Ogre::StringConverter::toString(stats.triangleCount));
-
-	Ogre::OverlayElement* guiBatches = Ogre::OverlayManager::getSingleton().getOverlayElement("Core/NumBatches");
-	guiBatches->setCaption(batches + Ogre::StringConverter::toString(stats.batchCount));
+	
 
 	
 }

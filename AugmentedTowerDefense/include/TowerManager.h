@@ -52,13 +52,14 @@ public:
 
 	void init();
 	std::vector<int> update(Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDPos);
-	void addTower(Ogre::Vector3 pos);
+	bool addTower(Ogre::Vector3 pos);
 	void setVisible(bool visible);
 	void show() { setVisible(true); }
 	void hide() { setVisible(false); }
 private:
 
 	Ogre::SceneManager *mSceneMgr;
+	ScoresManager* mScoresMgr;
 	std::vector<Tower*> mTowerVec;
 	bool mVisible;
 };
