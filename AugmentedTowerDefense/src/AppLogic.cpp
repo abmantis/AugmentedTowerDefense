@@ -28,6 +28,7 @@ AppLogic::AppLogic() : mApplication()
 
 	mContinue = true;
 	mGamePaused = true;
+	mGameOver = false;
 }
 
 AppLogic::~AppLogic()
@@ -109,7 +110,7 @@ bool AppLogic::update(Ogre::Real deltaTime)
 		}
 	}
 
-	if(!mGamePaused)
+	if(!mGamePaused && !mGameOver)
 	{
 		std::vector<int> shootedEnemies;
 		mEnemyMgr->update(deltaTime);
@@ -118,6 +119,12 @@ bool AppLogic::update(Ogre::Real deltaTime)
 	}
 
 	mHUDMgr->update();
+
+	if(mScoresMgr->GetPlayerEnergy() <= 0) 
+	{
+		mGameOver = true;
+		mHUDMgr->showPopup(true, "GAME OVER");
+	}
 
 	return true;
 }
@@ -320,9 +327,11 @@ void AppLogic::createWebcamPlane(int width, int height, Ogre::Real _distanceFrom
 
 void AppLogic::setupLights()
 {
-	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.3f, 0.3f, 0.3f));
+	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.6f, 0.6f, 0.6f));
 // 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.0f, 0.0f, 0.0f));
-	mSceneMgr->setShadowTechnique(mConfigMgr->ShadowType());
+//	mSceneMgr->setShadowTechnique(mConfigMgr->ShadowType());
+	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_ADDITIVE);
+	mSceneMgr->setShadowTextureSettings(2048,1);
 	
 	//Ogre::Light* pointLight = mSceneMgr->createLight("pointLight");
 	//pointLight->setType(Ogre::Light::LT_POINT);	
@@ -332,7 +341,7 @@ void AppLogic::setupLights()
 
  	Ogre::Light* dirLight = mSceneMgr->createLight("dirLight");
  	dirLight->setType(Ogre::Light::LT_DIRECTIONAL);	
- 	dirLight->setDiffuseColour(0.7f, 0.7f, 0.7f);
+ 	dirLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
  	dirLight->setSpecularColour(1.0f, 1.0f, 1.0f);
  	dirLight->setDirection(Ogre::Vector3(0.2f, 0.5f, -1));
 
@@ -354,6 +363,8 @@ void AppLogic::showScene()
 
 void AppLogic::pause( bool pause )
 {
+	if(mGameOver) return;
+
 	mGamePaused = pause; 
 	if(mGamePaused) mHUDMgr->showPopup(true, "Press SPACE to continue");
 	else mHUDMgr->showPopup(false, "");
@@ -423,6 +434,17 @@ bool AppLogic::OISListener::keyPressed( const OIS::KeyEvent &arg )
 	case OIS::KC_F3:
 		mParent->mCamera->setPolygonMode( Ogre::PM_POINTS );
 		break;
+	
+	case OIS::KC_F5:
+		mParent->mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_NONE);
+		break;
+	case OIS::KC_F6:
+		mParent->mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_ADDITIVE);
+		break;
+	case OIS::KC_F7:
+		mParent->mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+		break;
+	
 	case OIS::KC_F9:
 		mParent->mStatsFrameListener->toogleDebugOverlay();
 		break;

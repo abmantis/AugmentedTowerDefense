@@ -121,7 +121,19 @@ Tower::Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi, Ogre::Real shotTi
 	mGunsNode->attachObject(mGunsEntity);
 
 	mBodyNode->setPosition(posi);
-	mBodyNode->setScale(3,3,3);
+	Ogre::Vector3 scale(3,3,3);
+	mBodyNode->setScale(scale);
+
+	mRightGunWorldPos.x = mGunsEntity->getBoundingBox().getMaximum().x * scale.x;
+	mRightGunWorldPos.x -= mRightGunWorldPos.x*0.1f;
+	mRightGunWorldPos.y = mGunsEntity->getBoundingBox().getMinimum().y * scale.y;
+//	mRightGunWorldPos.y -= mRightGunWorldPos.y*0.1f;
+	mRightGunWorldPos.z = 0;	
+
+	mLeftGunWorldPos = mRightGunWorldPos;
+	mLeftGunWorldPos.x *= -1;
+	
+	mLastShotFromLeft = false;
 }
 
 Tower::~Tower()
@@ -190,7 +202,13 @@ int Tower::update( Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDA
 				delete mShot;
 				mShot = NULL;
 			}
-			mShot = new Shot(mSceneMgr, gunWorldPos, enemyPos, enemyID);
+			Ogre::Vector3 gunPos;
+			mLastShotFromLeft = !mLastShotFromLeft;
+			if(mLastShotFromLeft) gunPos = mLeftGunWorldPos;
+			else gunPos = mRightGunWorldPos;
+
+			gunPos = gunWorldPos + mGunsNode->_getDerivedOrientation() * gunPos;
+			mShot = new Shot(mSceneMgr, gunPos, enemyPos, enemyID);
 		}
 	}
 
@@ -220,7 +238,7 @@ void Tower::setVisible( bool visible )
 //////////////////////////////////////////////////////////////////////////
 Tower::Shot::Shot(Ogre::SceneManager* sceneMgr, Ogre::Vector3 startPos, Ogre::Vector3 enemyPos, int enemyID)
 {
-	mSpeed = 250;
+	mSpeed = 150;
 	mSceneMgr = sceneMgr;
 	mDirection = enemyPos - startPos;
 	mDistance = mDirection.normalise();
@@ -228,6 +246,7 @@ Tower::Shot::Shot(Ogre::SceneManager* sceneMgr, Ogre::Vector3 startPos, Ogre::Ve
 
 
 	mEntity = mSceneMgr->createEntity("Cylinderbullet.mesh");
+	mEntity->setCastShadows(false);
 	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(startPos);
 	mNode->attachObject(mEntity);
 	mNode->setScale(2,2,1);

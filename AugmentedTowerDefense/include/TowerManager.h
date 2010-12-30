@@ -23,6 +23,10 @@ private:
 	Ogre::Real mMaxShootSquaredDistance;
 	Ogre::Real mTimeSinceLastShot;
 	Ogre::Real mShotTimeInterval;
+	bool mLastShotFromLeft;
+	Ogre::Vector3 mLeftGunWorldPos;
+	Ogre::Vector3 mRightGunWorldPos;
+
 	Shot* mShot;
 
 	class Shot

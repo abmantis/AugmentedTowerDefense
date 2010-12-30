@@ -80,6 +80,7 @@ protected:
 
 	bool mContinue;
 	bool mGamePaused;
+	bool mGameOver;
 
 	// OIS
 	class OISListener : public OIS::MouseListener, public OIS::KeyListener

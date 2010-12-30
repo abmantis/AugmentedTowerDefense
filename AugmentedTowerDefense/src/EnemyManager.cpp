@@ -34,7 +34,7 @@ Enemy::Enemy(int ID, EnemyType type, int energy, Ogre::SceneManager *sceneMgr, s
 	mEntity = mSceneMgr->createEntity(meshName);
 	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
 	mNode->attachObject(mEntity);
-	mNode->setScale(mScale, mScale, mScale*2);
+	mNode->setScale(mScale, mScale, mScale);
 	Ogre::Vector3 posi = (*mWalkPath)[0];
 	//posi.z = mEntity->getBoundingBox().getSize().z * mScale * 0.5f;
 	mNode->setPosition(posi);
