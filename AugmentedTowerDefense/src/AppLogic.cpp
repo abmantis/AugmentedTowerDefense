@@ -451,9 +451,6 @@ bool AppLogic::OISListener::keyPressed( const OIS::KeyEvent &arg )
 		mParent->mSceneLoader->togleVisibility();
 		break;
 	case OIS::KC_F11:
-		//mParent->mCameraNode->setPosition(50,0,560);
-		//mParent->mCameraNode->setDirection(0,0,1);
-		//mParent->mSceneLoader->togleVisibility();
 		mParent->mTrackingSystem->mSimulate = !mParent->mTrackingSystem->mSimulate;
 		break;
 	case OIS::KC_F12:
