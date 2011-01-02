@@ -329,8 +329,7 @@ void AppLogic::setupLights()
 {
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.6f, 0.6f, 0.6f));
 // 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.0f, 0.0f, 0.0f));
-//	mSceneMgr->setShadowTechnique(mConfigMgr->ShadowType());
-	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_ADDITIVE);
+	mSceneMgr->setShadowTechnique(mConfigMgr->ShadowType());
 	mSceneMgr->setShadowTextureSettings(2048,1);
 	
 	//Ogre::Light* pointLight = mSceneMgr->createLight("pointLight");
@@ -457,6 +456,10 @@ bool AppLogic::OISListener::keyPressed( const OIS::KeyEvent &arg )
 		//mParent->mSceneLoader->togleVisibility();
 		mParent->mTrackingSystem->mSimulate = !mParent->mTrackingSystem->mSimulate;
 		break;
+	case OIS::KC_F12:
+		mParent->mApplication->getRenderWindow()->writeContentsToTimestampedFile("screenshot",".jpg");
+		break;
+	
 	}
 	return true;
 }
