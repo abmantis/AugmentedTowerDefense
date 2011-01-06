@@ -100,12 +100,12 @@ void TrackingSystem::convertPoseToOgreCoordinate()
 	const ARToolKitPlus::ARMultiMarkerInfoT* config = mTrackerMulti->getMultiMarkerConfig();	
 	// Convert the AR matrix to an OGRE matrix and then compute the camera 
 	// position relative to the markers system 
-	Ogre::Matrix4 invTrans = convert(config->trans).inverseAffine();
+	Ogre::Matrix4 invTrans = convert(config->trans);//.inverseAffine();
 	
 
 	Ogre::Vector3 invTransPosition = invTrans.getTrans();
 	Ogre::Quaternion invTransOrientation = invTrans.extractQuaternion();	
-	invTransOrientation = invTransOrientation * mRot180Z;	
+//	invTransOrientation = invTransOrientation * mRot180Z;	
 		
 	mPosition = invTransPosition;
 	mOrientation = invTransOrientation;	

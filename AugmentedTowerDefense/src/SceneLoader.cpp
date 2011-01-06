@@ -2,11 +2,12 @@
 #include "SceneLoader.h"
 #include "SharedStuff.h"
 
-SceneLoader::SceneLoader(Ogre::SceneManager* sceneMgr)
+SceneLoader::SceneLoader(Ogre::SceneManager* sceneMgr, Ogre::SceneNode *baseSceneNode)
 {
 	mSceneMgr = sceneMgr;
-	mSceneRootNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("SceneRootNode");
+	mSceneRootNode = baseSceneNode->createChildSceneNode("SceneRootNode");
 	mSceneRootNode->setPosition(0,0,0);
+	mSceneRootNode->setDirection(0,0,-1);
 
 	mForceHide = false;
 

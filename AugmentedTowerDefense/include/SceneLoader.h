@@ -5,7 +5,7 @@
 class SceneLoader
 {
 public:
-	SceneLoader(Ogre::SceneManager* sceneMgr);
+	SceneLoader(Ogre::SceneManager* sceneMgr, Ogre::SceneNode *baseSceneNode);
 	~SceneLoader(void);
 
 	bool init();

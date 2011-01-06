@@ -64,7 +64,7 @@ protected:
 	Ogre::Viewport *mViewport;
 	Ogre::Camera *mCamera;
 	Ogre::SceneNode* mCameraNode;
-	Ogre::SceneNode* mObjectNode;
+	Ogre::SceneNode* mBaseSceneNode;
 	VideoDeviceManager mVideoDeviceManager;
 	VideoDevice* mVideoDevice;
 	TrackingSystem* mTrackingSystem;

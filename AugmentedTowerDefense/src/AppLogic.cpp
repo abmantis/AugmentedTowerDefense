@@ -13,7 +13,7 @@ AppLogic::AppLogic() : mApplication()
 	mCamera				= NULL;
 	mCameraNode			= NULL;
 	mVideoDevice		= NULL;
-	mObjectNode			= NULL;
+	mBaseSceneNode			= NULL;
 	mTrackingSystem		= NULL;
 	mStatsFrameListener = NULL;
 	mAnimState			= NULL;
@@ -49,10 +49,11 @@ bool AppLogic::init(void)
 	createSceneManager();
 	createViewport();
 	createCamera();
-	setupLights();
+	
 	
 	mScoresMgr = new ScoresManager();
 	createScene();
+	setupLights();
 
 	Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(mConfigMgr->TextureFilter());
 	Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(mConfigMgr->AnisotropyLevel());
@@ -100,8 +101,10 @@ bool AppLogic::update(Ogre::Real deltaTime)
 		{
 			//mObjectNode->setVisible(true);
 			showScene();
-			mCameraNode->setOrientation(mTrackingSystem->getOrientation());
-			mCameraNode->setPosition(mTrackingSystem->getTranslation());
+			mBaseSceneNode->setOrientation(mTrackingSystem->getOrientation());
+			mBaseSceneNode->setPosition(mTrackingSystem->getTranslation());
+			/*mCameraNode->setOrientation(mTrackingSystem->getOrientation());
+			mCameraNode->setPosition(mTrackingSystem->getTranslation());*/
 		}
 		else
 		{
@@ -196,12 +199,11 @@ void AppLogic::createCamera(void)
 	mViewport->setCamera(mCamera);
 
 	mCameraNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cameraNode");
-	mCameraNode->setPosition(0, 0, 50000);
-	//mCameraNode->lookAt(Ogre::Vector3(0, 0, 0), Ogre::Node::TS_WORLD);
+	mCameraNode->setPosition(0, 0, 0);
 	mCameraNode->attachObject(mCamera);
 	mCameraNode->setFixedYawAxis(true, Ogre::Vector3::UNIT_Y);
-	//mCameraNode->setOrientation(mCameraNode->getOrientation() * Ogre::Quaternion(Ogre::Degree(180.f), Ogre::Vector3::UNIT_Y));
-	mCameraNode->setDirection(0,0,1, Ogre::SceneNode::TS_WORLD);
+	mCameraNode->setDirection(0, 0, -1, Ogre::SceneNode::TS_WORLD);
+	mCameraNode->roll(Ogre::Degree(180));
 }
 
 void AppLogic::createScene(void)
@@ -209,7 +211,8 @@ void AppLogic::createScene(void)
 	Ogre::Entity::setDefaultQueryFlags(AugmentedTowerDefense::MASK_DEFAULT);
 	mSceneMgr->setSkyBox(true, "Examples/Grid");
 
-	mSceneLoader = new SceneLoader(mSceneMgr);
+	mBaseSceneNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("baseSceneNode");
+	mSceneLoader = new SceneLoader(mSceneMgr, mBaseSceneNode);
 	mSceneLoader->init();
 	mSceneLoader->hide();
 
@@ -246,7 +249,7 @@ void AppLogic::createScene(void)
 // 	mAnimState->setEnabled(true);
 
 
-//	HelperClass::CreateAxis(mSceneMgr);
+//	AugmentedTowerDefense::HelperClass::CreateAxis(mSceneMgr);
 }
 
 void AppLogic::initTracking( int &width, int &height )
@@ -339,6 +342,7 @@ void AppLogic::setupLights()
 	//pointLight->setPosition(Ogre::Vector3(0, 150, 300));
 
  	Ogre::Light* dirLight = mSceneMgr->createLight("dirLight");
+	mBaseSceneNode->attachObject(dirLight);
  	dirLight->setType(Ogre::Light::LT_DIRECTIONAL);	
  	dirLight->setDiffuseColour(0.8f, 0.8f, 0.8f);
  	dirLight->setSpecularColour(1.0f, 1.0f, 1.0f);
