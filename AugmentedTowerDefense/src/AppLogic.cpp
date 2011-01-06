@@ -222,7 +222,7 @@ void AppLogic::createScene(void)
 	//	HelperClass::CreateLine(mSceneMgr, walkArray[i-1], walkArray[i]);
 	//}
 
-	mEnemyMgr = new EnemyManager(mSceneMgr);
+	mEnemyMgr = new EnemyManager(mSceneMgr, mBaseSceneNode);
 	mEnemyMgr->init(walkArray);
 	mEnemyMgr->hide();
 

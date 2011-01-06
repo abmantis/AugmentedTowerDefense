@@ -11,7 +11,7 @@ public:
 	enum EnemyState { BORNING, ALIVE, DEFEATED, VICTORIOUS };
 	enum EnemyType { NORMAL, ENERGY, UPGRADE };
 public:
-	Enemy(int ID, EnemyType type, int energy, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath);
+	Enemy(int ID, EnemyType type, int energy, Ogre::SceneManager *sceneMgr, Ogre::SceneNode *sceneRootNode, std::vector<Ogre::Vector3> *walkPath);
 	~Enemy();
 	void update(Ogre::Real deltaTime);
 	void setVisible(bool visible) { mEntity->setVisible(visible); }
@@ -46,7 +46,7 @@ private:
 class EnemyManager
 {
 public:
-	EnemyManager(Ogre::SceneManager *sceneMgr);
+	EnemyManager(Ogre::SceneManager *sceneMgr, Ogre::SceneNode *sceneRootNode);
 	~EnemyManager(void);
 
 	void init(std::vector<Ogre::Vector3> walkPath);
@@ -73,6 +73,7 @@ private:
 	int mLastEnemyID;
 	int mCurrentEnemyEnergy;
 	ScoresManager* mScoresMgr;
+	Ogre::SceneNode *mSceneRootNode;
 
 };
 #endif // EnemyManager_h__

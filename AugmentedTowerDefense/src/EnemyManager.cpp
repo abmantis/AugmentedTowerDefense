@@ -5,7 +5,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Enemy class
 //////////////////////////////////////////////////////////////////////////
-Enemy::Enemy(int ID, EnemyType type, int energy, Ogre::SceneManager *sceneMgr, std::vector<Ogre::Vector3> *walkPath )
+Enemy::Enemy(int ID, EnemyType type, int energy, Ogre::SceneManager *sceneMgr, Ogre::SceneNode *sceneRootNode, std::vector<Ogre::Vector3> *walkPath )
 :mSceneMgr(sceneMgr), mWalkPath(walkPath)
 {
 	mID = ID;
@@ -32,7 +32,7 @@ Enemy::Enemy(int ID, EnemyType type, int energy, Ogre::SceneManager *sceneMgr, s
 
 	
 	mEntity = mSceneMgr->createEntity(meshName);
-	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	mNode = sceneRootNode->createChildSceneNode();
 	mNode->attachObject(mEntity);
 	mNode->setScale(mScale, mScale, mScale);
 	Ogre::Vector3 posi = (*mWalkPath)[0];
@@ -120,8 +120,8 @@ void Enemy::addShot()
 //////////////////////////////////////////////////////////////////////////
 // EnemyManager class
 //////////////////////////////////////////////////////////////////////////
-EnemyManager::EnemyManager( Ogre::SceneManager *sceneMgr )
-: mSceneMgr(sceneMgr)
+EnemyManager::EnemyManager( Ogre::SceneManager *sceneMgr, Ogre::SceneNode *sceneRootNode )
+: mSceneMgr(sceneMgr), mSceneRootNode(sceneRootNode)
 {	
 	mTimeSinceLastWave = 0;	
 	mTimeSinceLastEnemyBorn = 999;
@@ -247,7 +247,7 @@ void EnemyManager::createEnemy()
 		break;
 	}
 
-	Enemy* pEnemy = new Enemy(mLastEnemyID, type, mCurrentEnemyEnergy, mSceneMgr, &mWalkPath);
+	Enemy* pEnemy = new Enemy(mLastEnemyID, type, mCurrentEnemyEnergy, mSceneMgr, mSceneRootNode, &mWalkPath);
 	pEnemy->setVisible(mVisible);
 	mEnemyArray.push_back(pEnemy);
 	mEnemiesBorn++;
