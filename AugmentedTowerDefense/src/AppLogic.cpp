@@ -226,7 +226,7 @@ void AppLogic::createScene(void)
 	mEnemyMgr->init(walkArray);
 	mEnemyMgr->hide();
 
-	mTowerMgr = new TowerManager(mSceneMgr);
+	mTowerMgr = new TowerManager(mSceneMgr, mBaseSceneNode);
 	mTowerMgr->init();
 	mTowerMgr->hide();
 

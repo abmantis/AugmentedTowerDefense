@@ -5,8 +5,8 @@
 //////////////////////////////////////////////////////////////////////////
 // TowerManager class
 //////////////////////////////////////////////////////////////////////////
-TowerManager::TowerManager( Ogre::SceneManager *sceneMgr )
-: mSceneMgr(sceneMgr)
+TowerManager::TowerManager( Ogre::SceneManager *sceneMgr, Ogre::SceneNode *sceneRootNode )
+: mSceneMgr(sceneMgr), mSceneRootNode(sceneRootNode)
 {
  	mVisible = false;
 	mScoresMgr = NULL;
@@ -65,7 +65,7 @@ bool TowerManager::addTower( Ogre::Vector3 pos )
 		Ogre::Real shotTimeInterval = 2; //initially the towers fire every 2 seconds
 		shotTimeInterval -= (mScoresMgr->GetTowerLevel()-1)*0.1f;
 		mScoresMgr->ChangePoints(-towerPrice);
-		mTowerVec.push_back(new Tower(mSceneMgr, pos, shotTimeInterval));
+		mTowerVec.push_back(new Tower(mSceneMgr, mSceneRootNode, pos, shotTimeInterval));
 		return true;
 	}
 	else
@@ -91,8 +91,8 @@ void TowerManager::setVisible( bool visible )
 //////////////////////////////////////////////////////////////////////////
 // Tower class
 //////////////////////////////////////////////////////////////////////////
-Tower::Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi, Ogre::Real shotTimeInterval)
-: mSceneMgr(sceneMgr)
+Tower::Tower(Ogre::SceneManager *sceneMgr, Ogre::SceneNode *sceneRootNode, Ogre::Vector3 posi, Ogre::Real shotTimeInterval)
+: mSceneMgr(sceneMgr), mSceneRootNode(sceneRootNode)
 {
 	mShot = NULL;
 	mTimeSinceLastShot = 0;
@@ -103,7 +103,7 @@ Tower::Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi, Ogre::Real shotTi
 	// Body
 	mBodyEntity = mSceneMgr->createEntity("ATD_tower_body.mesh");
 	mBodyEntity->setQueryFlags(mask);
-	mBodyNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	mBodyNode =sceneRootNode->createChildSceneNode();
 	mBodyNode->attachObject(mBodyEntity);
 
 	// Head
@@ -208,7 +208,7 @@ int Tower::update( Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDA
 			else gunPos = mRightGunWorldPos;
 
 			gunPos = gunWorldPos + mGunsNode->_getDerivedOrientation() * gunPos;
-			mShot = new Shot(mSceneMgr, gunPos, enemyPos, enemyID);
+			mShot = new Shot(mSceneMgr, mSceneRootNode, gunPos, enemyPos, enemyID);
 		}
 	}
 
@@ -236,7 +236,7 @@ void Tower::setVisible( bool visible )
 //////////////////////////////////////////////////////////////////////////
 // Tower::Shot class
 //////////////////////////////////////////////////////////////////////////
-Tower::Shot::Shot(Ogre::SceneManager* sceneMgr, Ogre::Vector3 startPos, Ogre::Vector3 enemyPos, int enemyID)
+Tower::Shot::Shot(Ogre::SceneManager* sceneMgr, Ogre::SceneNode *sceneRootNode, Ogre::Vector3 startPos, Ogre::Vector3 enemyPos, int enemyID)
 {
 	mSpeed = 150;
 	mSceneMgr = sceneMgr;
@@ -247,7 +247,7 @@ Tower::Shot::Shot(Ogre::SceneManager* sceneMgr, Ogre::Vector3 startPos, Ogre::Ve
 
 	mEntity = mSceneMgr->createEntity("Cylinderbullet.mesh");
 	mEntity->setCastShadows(false);
-	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(startPos);
+	mNode = sceneRootNode->createChildSceneNode(startPos);
 	mNode->attachObject(mEntity);
 	mNode->setScale(2,2,1);
 	mNode->setDirection(mDirection);

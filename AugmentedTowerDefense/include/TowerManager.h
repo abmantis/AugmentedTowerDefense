@@ -5,7 +5,7 @@
 class Tower
 {	
 public:
-	Tower(Ogre::SceneManager *sceneMgr, Ogre::Vector3 posi, Ogre::Real shotRateTime);
+	Tower(Ogre::SceneManager *sceneMgr, Ogre::SceneNode *sceneRootNode, Ogre::Vector3 posi, Ogre::Real shotRateTime);
 	~Tower();
 
 	int update(Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDPos);
@@ -14,6 +14,7 @@ private:
 
 	class Shot;
 	Ogre::SceneManager *mSceneMgr;
+	Ogre::SceneNode *mSceneRootNode;
 	Ogre::SceneNode *mBodyNode;
 	Ogre::SceneNode *mHeadNode;
 	Ogre::SceneNode *mGunsNode;
@@ -32,7 +33,7 @@ private:
 	class Shot
 	{
 	public:
-		Shot(Ogre::SceneManager* sceneMgr, Ogre::Vector3 startPos, Ogre::Vector3 enemyPos, int enemyID);
+		Shot(Ogre::SceneManager* sceneMgr, Ogre::SceneNode *sceneRootNode, Ogre::Vector3 startPos, Ogre::Vector3 enemyPos, int enemyID);
 		~Shot();
 		bool update(Ogre::Real deltaTime);
 		int getEnemyID() { return mEnemyID; }
@@ -51,7 +52,7 @@ private:
 class TowerManager
 {
 public:
-	TowerManager(Ogre::SceneManager *sceneMgr);
+	TowerManager(Ogre::SceneManager *sceneMgr, Ogre::SceneNode *sceneRootNode);
 	~TowerManager(void);
 
 	void init();
@@ -63,8 +64,10 @@ public:
 private:
 
 	Ogre::SceneManager *mSceneMgr;
+	Ogre::SceneNode *mSceneRootNode;
 	ScoresManager* mScoresMgr;
 	std::vector<Tower*> mTowerVec;
 	bool mVisible;
+
 };
 #endif // TowerManager_h__
