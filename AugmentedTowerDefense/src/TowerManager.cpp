@@ -174,9 +174,11 @@ int Tower::update( Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDA
 	{
 		//////////////////////////////////////
 		// The tower is originally facing -Y
+		Ogre::Vector3 headDerivedPos = mBodyNode->getPosition() + mBodyNode->getOrientation()*mHeadNode->getPosition();
+		Ogre::Vector3 gunsDerivedPos = mGunsNode->getPosition();
 
 		// Rotate head
-		Ogre::Vector3 direction = enemyPos - mHeadNode->_getDerivedPosition();//getPosition();
+		Ogre::Vector3 direction = enemyPos - headDerivedPos;
 		Ogre::Vector3 src = mHeadNode->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Y;
 		direction.z = 0;	// Strip out Z component (we only want to rotate arround X & Y)
 		src.z = 0;
