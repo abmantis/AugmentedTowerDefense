@@ -98,18 +98,31 @@ bool AppLogic::update(Ogre::Real deltaTime)
 
 		//Tracking using ArToolKitPlus
 		if (mTrackingSystem->update(box))
-		{
-			//mObjectNode->setVisible(true);
+		{			
 			showScene();
 			mBaseSceneNode->setOrientation(mTrackingSystem->getOrientation());
 			mBaseSceneNode->setPosition(mTrackingSystem->getTranslation());
 			/*mCameraNode->setOrientation(mTrackingSystem->getOrientation());
 			mCameraNode->setPosition(mTrackingSystem->getTranslation());*/
+			
 		}
 		else
 		{
 			hideScene();
-			//mObjectNode->setVisible(false);
+			mObjectNode->setVisible(false);
+		}
+
+		std::vector<Marker> mvec = mTrackingSystem->getVisibleMarkers();
+		for(int i = 0; i < mvec.size(); i++)
+		{
+			Marker m = mvec[i];
+			if(m.id == 2)
+			{
+				mObjectNode->setVisible(true);
+				mObjectNode->setPosition(m.trans.getTrans());
+				mObjectNode->setOrientation(m.trans.extractQuaternion());
+				break; 
+			}
 		}
 	}
 
@@ -230,23 +243,24 @@ void AppLogic::createScene(void)
 	mTowerMgr->init();
 	mTowerMgr->hide();
 
-// 	Ogre::Real scale = 10;
-// 	Ogre::Entity* ent = mSceneMgr->createEntity("Sinbad.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
-// 
-// 	mObjectNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cube");	
-// 	mObjectNode->setOrientation(Quaternion(Degree(90.f), Vector3::UNIT_X));
-// 	mObjectNode->setPosition(0, 0, 5*scale);
-// 	mObjectNode->setScale(Ogre::Vector3::UNIT_SCALE*scale);
-// 	mObjectNode->attachObject(ent);
-// 
-// 	// create swords and attach them to sinbad
-// 	Ogre::Entity* sword1 = mSceneMgr->createEntity("SinbadSword1", "Sword.mesh");
-// 	Ogre::Entity* sword2 = mSceneMgr->createEntity("SinbadSword2", "Sword.mesh");
-// 	ent->attachObjectToBone("Sheath.L", sword1);
-// 	ent->attachObjectToBone("Sheath.R", sword2);
-// 	mAnimState = ent->getAnimationState("Dance");
-// 	mAnimState->setLoop(true);
-// 	mAnimState->setEnabled(true);
+ 	Ogre::Real scale = 10;
+ 	Ogre::Entity* ent = mSceneMgr->createEntity("Sinbad.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
+ 
+ 	mObjectNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cube");	
+ 	mObjectNode->setOrientation(Ogre::Quaternion(Ogre::Degree(90.f), Ogre::Vector3::UNIT_X));
+ 	mObjectNode->setPosition(0, 0, 5*scale);
+ 	mObjectNode->setScale(Ogre::Vector3::UNIT_SCALE*scale);
+ 	mObjectNode->attachObject(ent);
+	mObjectNode->setVisible(false);
+ 
+ 	// create swords and attach them to sinbad
+ 	Ogre::Entity* sword1 = mSceneMgr->createEntity("SinbadSword1", "Sword.mesh");
+ 	Ogre::Entity* sword2 = mSceneMgr->createEntity("SinbadSword2", "Sword.mesh");
+ 	ent->attachObjectToBone("Sheath.L", sword1);
+ 	ent->attachObjectToBone("Sheath.R", sword2);
+ 	mAnimState = ent->getAnimationState("Dance");
+ 	mAnimState->setLoop(true);
+ 	mAnimState->setEnabled(true);
 
 
 //	AugmentedTowerDefense::HelperClass::CreateAxis(mSceneMgr);

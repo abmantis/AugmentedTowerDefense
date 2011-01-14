@@ -191,3 +191,25 @@ void TrackingSystem::Simulate()
 	mOrientation = mOrientation * Ogre::Quaternion(Ogre::Degree(180.f), Ogre::Vector3::UNIT_Y);
 	mPoseComputed = true;
 }
+
+const std::vector<Marker> TrackingSystem::getVisibleMarkers() const
+{
+	ARFloat width = 40;
+	ARFloat center[2];
+	center[0] = center[1] = 0.0;
+
+	std::vector<Marker> retVec;
+	
+	int nMarkers = mTrackerMulti->getNumDetectedMarkers();
+	for(int i=0; i < nMarkers; i++)
+	{
+		ARFloat trans [3][4];
+		ARToolKitPlus::ARMarkerInfo marker = mTrackerMulti->getDetectedMarker(i);
+
+		mTrackerMulti->arGetTransMat(&marker, center, width, trans );
+		Marker m(convert(trans), marker.id);
+		retVec.push_back(m);
+	}
+	return retVec;
+	
+}

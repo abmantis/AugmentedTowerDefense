@@ -29,6 +29,7 @@ class TrackingSystem
 
 		const std::vector<Marker> getMarkersInfo() const;
 		const std::vector<int>    getVisibleMarkersId() const;
+		const std::vector<Marker> getVisibleMarkers() const;
 		
 		void printMarkersInfo();
 
