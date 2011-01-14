@@ -64,6 +64,8 @@ std::vector<int> TowerManager::update( Ogre::Real deltaTime, std::vector<Enemy::
 
 bool TowerManager::addTower( Ogre::Vector3 pos )
 {
+	std::cout<< "ADD TOWER" << std::endl;
+
 	int towerPrice = mScoresMgr->GetTowerPrice();
 	if(towerPrice <= mScoresMgr->GetPoints())
 	{
@@ -150,7 +152,7 @@ Tower::Tower(Ogre::SceneManager *sceneMgr, Ogre::SceneNode *sceneRootNode, Ogre:
 	mGunsNode->attachObject(mGunsEntity);
 
 	mBodyNode->setPosition(posi);
-	Ogre::Vector3 scale(3,3,3);
+	Ogre::Vector3 scale(3,3,2);
 	mBodyNode->setScale(scale);
 
 	mRightGunWorldPos.x = mGunsEntity->getBoundingBox().getMaximum().x * scale.x;
