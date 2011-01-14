@@ -5,11 +5,12 @@
 //////////////////////////////////////////////////////////////////////////
 // TowerManager class
 //////////////////////////////////////////////////////////////////////////
-TowerManager::TowerManager( Ogre::SceneManager *sceneMgr, Ogre::SceneNode *sceneRootNode )
-: mSceneMgr(sceneMgr), mSceneRootNode(sceneRootNode)
+TowerManager::TowerManager( Ogre::SceneManager *sceneMgr, MOC::CollisionTools* colisionTools, Ogre::SceneNode *sceneRootNode )
+: mSceneMgr(sceneMgr), mColisionTools(colisionTools), mSceneRootNode(sceneRootNode)
 {
  	mVisible = false;
 	mScoresMgr = NULL;
+	mPlacementTower = NULL;
 }
 
 TowerManager::~TowerManager( void )
@@ -28,15 +29,18 @@ void TowerManager::init()
 	// set mVisible = true so that setVisible will process and change mVisible to false :)
 	mVisible = true;
 	setVisible(false);
-
+	
 	// lets initialize the tower's entities. Otherwise there  
 	// will be a delay when the player adds the first tower
-	Ogre::Entity *ent = mSceneMgr->createEntity("ATD_tower_body.mesh");
-	mSceneMgr->destroyEntity(ent);
-	ent = mSceneMgr->createEntity("ATD_tower_head.mesh");
-	mSceneMgr->destroyEntity(ent);
-	ent = mSceneMgr->createEntity("ATD_tower_guns.mesh");
-	mSceneMgr->destroyEntity(ent);
+	//Ogre::Entity *ent = mSceneMgr->createEntity("ATD_tower_body.mesh");
+	//mSceneMgr->destroyEntity(ent);
+	//ent = mSceneMgr->createEntity("ATD_tower_head.mesh");
+	//mSceneMgr->destroyEntity(ent);
+	//ent = mSceneMgr->createEntity("ATD_tower_guns.mesh");
+	//mSceneMgr->destroyEntity(ent);
+
+	mPlacementTower = new Tower(mSceneMgr, mSceneMgr->getRootSceneNode(), Ogre::Vector3::ZERO, 0);
+	mPlacementTower->setVisible(false);
 }
 
 // @param deltaTime: time since last call
@@ -53,7 +57,8 @@ std::vector<int> TowerManager::update( Ogre::Real deltaTime, std::vector<Enemy::
 		{
 			shootedEnemies.push_back(enemyID);
 		}
-	}
+	}	
+
 	return shootedEnemies;
 }
 
@@ -74,6 +79,29 @@ bool TowerManager::addTower( Ogre::Vector3 pos )
 	}
 }
 
+bool TowerManager::addTowerToWall( Ogre::Entity *pWall )
+{
+	if(pWall->isVisible() == false) return false;
+	
+	float closestDist;
+	Ogre::Vector3 result;
+	Ogre::SceneNode *pWallNode = pWall->getParentSceneNode();
+	Ogre::Vector3 wallPos = pWallNode->getPosition();	
+	Ogre::Entity *pTowerTarget = NULL;
+	Ogre::Vector3 pointAboveWallCenter(wallPos.x, wallPos.y, 99999);
+
+	//////////////////////////////////////////////////////////////////////////
+	// Make sure there's not a tower already in this wall 
+	if( mColisionTools->raycastFromPoint(
+		pointAboveWallCenter, Ogre::Vector3::NEGATIVE_UNIT_Z, result, pTowerTarget, 
+		closestDist, AugmentedTowerDefense::MASK_TOWER) == false)
+	{
+
+		wallPos.z += pWall->getBoundingBox().getSize().z * pWallNode->getScale().z * 0.5f;
+		return addTower(wallPos);
+	}	
+}
+
 void TowerManager::setVisible( bool visible )
 {
 	if(visible != mVisible)
@@ -86,6 +114,7 @@ void TowerManager::setVisible( bool visible )
 		}
 	}
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -231,7 +260,6 @@ void Tower::setVisible( bool visible )
 {
 	mBodyNode->setVisible(visible);	
 }
-
 
 
 

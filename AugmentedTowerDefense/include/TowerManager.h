@@ -1,6 +1,7 @@
 #ifndef TowerManager_h__
 #define TowerManager_h__
 #include "EnemyManager.h"
+#include "CollisionTools.h"
 
 class Tower
 {	
@@ -10,6 +11,9 @@ public:
 
 	int update(Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDPos);
 	void setVisible(bool visible);
+	Ogre::Vector3 getPosition() { return mBodyNode->getPosition(); }
+	void setPosition(Ogre::Vector3 pos) { mBodyNode->setPosition(pos); }
+	void setOrientation(Ogre::Quaternion ori) { mBodyNode->setOrientation(ori); }
 private:
 
 	class Shot;
@@ -52,22 +56,27 @@ private:
 class TowerManager
 {
 public:
-	TowerManager(Ogre::SceneManager *sceneMgr, Ogre::SceneNode *sceneRootNode);
+	TowerManager(Ogre::SceneManager *sceneMgr, MOC::CollisionTools* colisionTools, Ogre::SceneNode *sceneRootNode);
 	~TowerManager(void);
 
 	void init();
 	std::vector<int> update(Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDPos);
+	bool addTowerToWall(Ogre::Entity *pWall);
 	bool addTower(Ogre::Vector3 pos);
 	void setVisible(bool visible);
 	void show() { setVisible(true); }
 	void hide() { setVisible(false); }
+	
+	Tower *mPlacementTower;
+
 private:
 
 	Ogre::SceneManager *mSceneMgr;
 	Ogre::SceneNode *mSceneRootNode;
 	ScoresManager* mScoresMgr;
+	MOC::CollisionTools* mColisionTools;
+	
 	std::vector<Tower*> mTowerVec;
 	bool mVisible;
-
 };
 #endif // TowerManager_h__

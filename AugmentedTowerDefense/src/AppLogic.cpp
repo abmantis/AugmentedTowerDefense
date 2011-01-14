@@ -43,27 +43,35 @@ bool AppLogic::preInit(const Ogre::StringVector &commandArgs)
 // postAppInit
 bool AppLogic::init(void)
 {
+	mSingleMarkers[0] = 0;
+	mSingleMarkers[1] = 1;
+	mSingleMarkersCount = 2;
+	mTimeSinceSeenTowerMarker = 99999;
+
+
 	mConfigMgr = new ConfigurationManager();
 	mConfigMgr->init();
 
 	createSceneManager();
 	createViewport();
 	createCamera();
-	
-	
-	mScoresMgr = new ScoresManager();
-	createScene();
-	setupLights();
 
 	Ogre::MaterialManager::getSingleton().setDefaultTextureFiltering(mConfigMgr->TextureFilter());
 	Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(mConfigMgr->AnisotropyLevel());
-
-	mColisionTools = new MOC::CollisionTools(mSceneMgr);
+	
 	
 	//webcam resolution
 	int width, height;
 	initTracking(width, height);
 	createWebcamPlane(width, height, 4500.0f);	
+
+	mColisionTools = new MOC::CollisionTools(mSceneMgr);
+
+	mScoresMgr = new ScoresManager();
+	createScene();
+	setupLights();
+	
+	
 
 	mHUDMgr = new HUDManager();
 	mHUDMgr->init();
@@ -102,28 +110,49 @@ bool AppLogic::update(Ogre::Real deltaTime)
 			showScene();
 			mBaseSceneNode->setOrientation(mTrackingSystem->getOrientation());
 			mBaseSceneNode->setPosition(mTrackingSystem->getTranslation());
-			/*mCameraNode->setOrientation(mTrackingSystem->getOrientation());
-			mCameraNode->setPosition(mTrackingSystem->getTranslation());*/
 			
 		}
 		else
 		{
 			hideScene();
-			mObjectNode->setVisible(false);
+			//mObjectNode->setVisible(false);
 		}
 
-		std::vector<Marker> mvec = mTrackingSystem->getVisibleMarkers();
+		/*std::vector<Marker> mvec = mTrackingSystem->getVisibleMarkers();
 		for(int i = 0; i < mvec.size(); i++)
 		{
 			Marker m = mvec[i];
-			if(m.id == 2)
+			if(m.id == 0)
 			{
 				mObjectNode->setVisible(true);
 				mObjectNode->setPosition(m.trans.getTrans());
 				mObjectNode->setOrientation(m.trans.extractQuaternion());
 				break; 
 			}
-		}
+		}*/
+		
+		Marker marker = mTrackingSystem->getSingleMarkerFromList(mSingleMarkers, mSingleMarkersCount);
+		switch(marker.id)
+		{
+		case 0:
+			mTowerMgr->mPlacementTower->setVisible(true);
+			mTowerMgr->mPlacementTower->setPosition(marker.trans.getTrans());
+			mTowerMgr->mPlacementTower->setOrientation(marker.trans.extractQuaternion());
+			mTimeSinceSeenTowerMarker = 0;
+			break;
+		case 1:
+			mTimeSinceSeenTowerMarker += deltaTime;
+			mTowerMgr->mPlacementTower->setVisible(false);	
+			if(mTimeSinceSeenTowerMarker < 0.5f)
+			{
+				addTowerFromMarker(mTowerMgr->mPlacementTower->getPosition());
+			}
+			break;
+		default:
+			mTimeSinceSeenTowerMarker += deltaTime;
+			mTowerMgr->mPlacementTower->setVisible(false);			
+			break;
+		}		
 	}
 
 	if(!mGamePaused && !mGameOver)
@@ -239,28 +268,28 @@ void AppLogic::createScene(void)
 	mEnemyMgr->init(walkArray);
 	mEnemyMgr->hide();
 
-	mTowerMgr = new TowerManager(mSceneMgr, mBaseSceneNode);
+	mTowerMgr = new TowerManager(mSceneMgr, mColisionTools, mBaseSceneNode);
 	mTowerMgr->init();
 	mTowerMgr->hide();
 
- 	Ogre::Real scale = 10;
- 	Ogre::Entity* ent = mSceneMgr->createEntity("Sinbad.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
- 
- 	mObjectNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cube");	
- 	mObjectNode->setOrientation(Ogre::Quaternion(Ogre::Degree(90.f), Ogre::Vector3::UNIT_X));
- 	mObjectNode->setPosition(0, 0, 5*scale);
- 	mObjectNode->setScale(Ogre::Vector3::UNIT_SCALE*scale);
- 	mObjectNode->attachObject(ent);
-	mObjectNode->setVisible(false);
- 
- 	// create swords and attach them to sinbad
- 	Ogre::Entity* sword1 = mSceneMgr->createEntity("SinbadSword1", "Sword.mesh");
- 	Ogre::Entity* sword2 = mSceneMgr->createEntity("SinbadSword2", "Sword.mesh");
- 	ent->attachObjectToBone("Sheath.L", sword1);
- 	ent->attachObjectToBone("Sheath.R", sword2);
- 	mAnimState = ent->getAnimationState("Dance");
- 	mAnimState->setLoop(true);
- 	mAnimState->setEnabled(true);
+ //	Ogre::Real scale = 5;
+ //	Ogre::Entity* ent = mSceneMgr->createEntity("Sinbad.mesh");	//1x1_cube.mesh //Sinbad.mesh //axes.mesh
+ //
+ //	mObjectNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("cube");	
+ //	mObjectNode->setOrientation(Ogre::Quaternion(Ogre::Degree(90.f), Ogre::Vector3::UNIT_X));
+ //	mObjectNode->setPosition(0, 0, 5*scale);
+ //	mObjectNode->setScale(Ogre::Vector3::UNIT_SCALE*scale);
+ //	mObjectNode->attachObject(ent);
+	//mObjectNode->setVisible(false);
+ //
+ //	// create swords and attach them to sinbad
+ //	Ogre::Entity* sword1 = mSceneMgr->createEntity("SinbadSword1", "Sword.mesh");
+ //	Ogre::Entity* sword2 = mSceneMgr->createEntity("SinbadSword2", "Sword.mesh");
+ //	ent->attachObjectToBone("Sheath.L", sword1);
+ //	ent->attachObjectToBone("Sheath.R", sword2);
+ //	mAnimState = ent->getAnimationState("Dance");
+ //	mAnimState->setLoop(true);
+ //	mAnimState->setEnabled(true);
 
 
 //	AugmentedTowerDefense::HelperClass::CreateAxis(mSceneMgr);
@@ -387,6 +416,23 @@ void AppLogic::pause( bool pause )
 	else mHUDMgr->showPopup(false, "");
 }
 
+void AppLogic::addTowerFromMarker( Ogre::Vector3 markerPos )
+{
+	if(mGamePaused) return;
+
+	Ogre::Entity *pWallTarget = NULL;
+	float closestDist;
+	Ogre::Vector3 result;
+	Ogre::Vector3 rayDirection = markerPos - Ogre::Vector3::ZERO;
+
+	// fire a ray that only detects walls (MASK_WALLS) from camera position (0,0,0) to marker position
+	if(mColisionTools->raycastFromPoint(Ogre::Vector3::ZERO, rayDirection, 
+		result, pWallTarget, closestDist, AugmentedTowerDefense::MASK_WALLS))
+	{
+		mTowerMgr->addTowerToWall(pWallTarget);
+	}
+}
+
 //--------------------------------- Inputs --------------------------------
 
 bool AppLogic::OISListener::mouseMoved( const OIS::MouseEvent &arg )
@@ -412,21 +458,22 @@ bool AppLogic::OISListener::mouseReleased( const OIS::MouseEvent &arg, OIS::Mous
 	if(mParent->mColisionTools->raycastFromCamera(mParent->mApplication->getRenderWindow(),
 		mParent->mCamera, mouseCoords, result, pWallTarget, closestDist, AugmentedTowerDefense::MASK_WALLS))
 	{
-		Ogre::SceneNode *pWallNode = pWallTarget->getParentSceneNode();
-		Ogre::Vector3 wallPos = pWallNode->getPosition();	
-		Ogre::Entity *pTowerTarget = NULL;
-		Ogre::Vector3 pointAboveWallCenter(wallPos.x, wallPos.y, 99999);
+		mParent->mTowerMgr->addTowerToWall(pWallTarget);
+		//Ogre::SceneNode *pWallNode = pWallTarget->getParentSceneNode();
+		//Ogre::Vector3 wallPos = pWallNode->getPosition();	
+		//Ogre::Entity *pTowerTarget = NULL;
+		//Ogre::Vector3 pointAboveWallCenter(wallPos.x, wallPos.y, 99999);
 
-		//////////////////////////////////////////////////////////////////////////
-		// Make sure there's not a tower already in this wall 
-		if(pWallTarget->isVisible() && mParent->mColisionTools->raycastFromPoint(
-			pointAboveWallCenter, Ogre::Vector3::NEGATIVE_UNIT_Z, result, pTowerTarget, 
-			closestDist, AugmentedTowerDefense::MASK_TOWER) == false)
-		{
-			
-			wallPos.z += pWallTarget->getBoundingBox().getSize().z * pWallNode->getScale().z * 0.5f;
-			mParent->mTowerMgr->addTower(wallPos);
-		}	
+		////////////////////////////////////////////////////////////////////////////
+		//// Make sure there's not a tower already in this wall 
+		//if(pWallTarget->isVisible() && mParent->mColisionTools->raycastFromPoint(
+		//	pointAboveWallCenter, Ogre::Vector3::NEGATIVE_UNIT_Z, result, pTowerTarget, 
+		//	closestDist, AugmentedTowerDefense::MASK_TOWER) == false)
+		//{
+		//	
+		//	wallPos.z += pWallTarget->getBoundingBox().getSize().z * pWallNode->getScale().z * 0.5f;
+		//	mParent->mTowerMgr->addTower(wallPos);
+		//}	
 	}
 	return true;
 }

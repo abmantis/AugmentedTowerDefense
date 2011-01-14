@@ -23,6 +23,9 @@ bool TrackingSystem::isUsingFullResImage        = true;
 bool TrackingSystem::isUsingHistory             = true;
 bool TrackingSystem::isUsingAutoThreshold       = true;
 int TrackingSystem::threshold                   = 140;
+ARFloat TrackingSystem::individualMarkersWidth	= 40;
+ARFloat TrackingSystem::individualMarkersCenter[2] = {0,0};
+//center[0] = center[1] = 0.0;
 
 TrackingSystem::TrackingSystem()
 : mRot180Z(Ogre::Degree(180.f), Ogre::Vector3::UNIT_Z)
@@ -194,10 +197,6 @@ void TrackingSystem::Simulate()
 
 const std::vector<Marker> TrackingSystem::getVisibleMarkers() const
 {
-	ARFloat width = 40;
-	ARFloat center[2];
-	center[0] = center[1] = 0.0;
-
 	std::vector<Marker> retVec;
 	
 	int nMarkers = mTrackerMulti->getNumDetectedMarkers();
@@ -206,10 +205,35 @@ const std::vector<Marker> TrackingSystem::getVisibleMarkers() const
 		ARFloat trans [3][4];
 		ARToolKitPlus::ARMarkerInfo marker = mTrackerMulti->getDetectedMarker(i);
 
-		mTrackerMulti->arGetTransMat(&marker, center, width, trans );
+		mTrackerMulti->arGetTransMat(&marker, individualMarkersCenter, individualMarkersWidth, trans );
 		Marker m(convert(trans), marker.id);
 		retVec.push_back(m);
 	}
 	return retVec;
 	
+}
+
+const Marker TrackingSystem::getSingleMarkerFromList( int* ids, int count ) const
+{
+	Marker marker;
+	marker.id = -1;
+
+	int nMarkers = mTrackerMulti->getNumDetectedMarkers();
+	for(int i=0; i < nMarkers; i++)
+	{		
+		ARToolKitPlus::ARMarkerInfo markerInfo = mTrackerMulti->getDetectedMarker(i);
+
+		for(int j = 0; j < count; j++)
+		{
+			if(markerInfo.id == ids[j])
+			{
+				ARFloat trans [3][4];
+				mTrackerMulti->arGetTransMat(&markerInfo, individualMarkersCenter, individualMarkersWidth, trans );
+				marker.id = markerInfo.id;
+				marker.trans = convert(trans);
+				return marker;
+			}
+		}		
+	}
+	return marker;
 }

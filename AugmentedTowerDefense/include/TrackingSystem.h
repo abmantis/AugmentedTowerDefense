@@ -30,6 +30,7 @@ class TrackingSystem
 		const std::vector<Marker> getMarkersInfo() const;
 		const std::vector<int>    getVisibleMarkersId() const;
 		const std::vector<Marker> getVisibleMarkers() const;
+		const Marker getSingleMarkerFromList(int* ids, int count) const;
 		
 		void printMarkersInfo();
 
@@ -39,6 +40,8 @@ class TrackingSystem
 		static bool isUsingHistory;
 		static bool isUsingAutoThreshold;
 		static int threshold;
+		static ARFloat individualMarkersWidth;
+		static ARFloat individualMarkersCenter[2];
 
 
 		bool mSimulate;

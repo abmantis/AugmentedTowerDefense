@@ -55,6 +55,8 @@ protected:
 	void hideScene();
 	void showScene();
 
+	void addTowerFromMarker(Ogre::Vector3 markerPos);
+
 	void end() { mContinue = false; }
 	void pause(bool pause);
 
@@ -78,6 +80,10 @@ protected:
 	ScoresManager* mScoresMgr;
 	HUDManager* mHUDMgr;
 	StatsFrameListener *mStatsFrameListener;
+
+	int mSingleMarkers[2];
+	int mSingleMarkersCount;
+	Ogre::Real mTimeSinceSeenTowerMarker;
 
 	bool mContinue;
 	bool mGamePaused;
