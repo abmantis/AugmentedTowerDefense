@@ -143,7 +143,7 @@ bool AppLogic::update(Ogre::Real deltaTime)
 		case 1:
 			mTimeSinceSeenTowerMarker += deltaTime;
 			mTowerMgr->mPlacementTower->setVisible(false);	
-			if(mTimeSinceSeenTowerMarker < 0.5f)
+			if(mTimeSinceSeenTowerMarker < 1)
 			{
 				addTowerFromMarker(mTowerMgr->mPlacementTower->getPosition());
 				mTimeSinceSeenTowerMarker = 9999;

@@ -64,8 +64,6 @@ std::vector<int> TowerManager::update( Ogre::Real deltaTime, std::vector<Enemy::
 
 bool TowerManager::addTower( Ogre::Vector3 pos )
 {
-	std::cout<< "ADD TOWER" << std::endl;
-
 	int towerPrice = mScoresMgr->GetTowerPrice();
 	if(towerPrice <= mScoresMgr->GetPoints())
 	{
@@ -205,12 +203,15 @@ int Tower::update( Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDA
 	{
 		//////////////////////////////////////
 		// The tower is originally facing -Y
-		Ogre::Vector3 headDerivedPos = mBodyNode->getPosition() + mBodyNode->getOrientation()*mHeadNode->getPosition();
-		Ogre::Vector3 gunsDerivedPos = mGunsNode->getPosition();
+		Ogre::Quaternion headDerivedOri = mBodyNode->getOrientation() * mHeadNode->getOrientation();
+		Ogre::Vector3 headDerivedPos = mBodyNode->getPosition() + mBodyNode->getOrientation() * (mBodyNode->getScale() * mHeadNode->getPosition());
+		Ogre::Vector3 headDerivedScale = mBodyNode->getScale() * mHeadNode->getScale();
+		Ogre::Quaternion gunsDerivedOri = headDerivedOri * mGunsNode->getOrientation();
+		Ogre::Vector3 gunsDerivedPos = headDerivedPos + headDerivedOri * (headDerivedScale * mGunsNode->getPosition());
 
 		// Rotate head
 		Ogre::Vector3 direction = enemyPos - headDerivedPos;
-		Ogre::Vector3 src = mHeadNode->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Y;
+		Ogre::Vector3 src = headDerivedOri * Ogre::Vector3::NEGATIVE_UNIT_Y;
 		direction.z = 0;	// Strip out Z component (we only want to rotate arround X & Y)
 		src.z = 0;
 		direction.normalise();
@@ -218,9 +219,8 @@ int Tower::update( Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDA
 		AugmentedTowerDefense::HelperClass::DoSafeRotation(mHeadNode, src, direction);
 
 		// Tilt gun
-		Ogre::Vector3 gunWorldPos = mGunsNode->_getDerivedPosition();
-		direction = enemyPos - gunWorldPos;
-		Ogre::Real height = gunWorldPos.z - enemyPos.z;
+		direction = enemyPos - gunsDerivedPos;
+		Ogre::Real height = gunsDerivedPos.z - enemyPos.z;
 		Ogre::Real distance = direction.length();
 		Ogre::Radian pitchAngle = Ogre::Degree(90) - Ogre::Math::ACos(height / distance);
 		Ogre::Quaternion quat;
@@ -240,7 +240,7 @@ int Tower::update( Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDA
 			if(mLastShotFromLeft) gunPos = mLeftGunWorldPos;
 			else gunPos = mRightGunWorldPos;
 
-			gunPos = gunWorldPos + mGunsNode->_getDerivedOrientation() * gunPos;
+			gunPos = gunsDerivedPos + gunsDerivedOri * gunPos;
 			mShot = new Shot(mSceneMgr, mSceneRootNode, gunPos, enemyPos, enemyID);
 		}
 	}
