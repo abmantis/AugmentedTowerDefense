@@ -61,7 +61,7 @@ public:
 
 	void init();
 	std::vector<int> update(Ogre::Real deltaTime, std::vector<Enemy::IDPosPair> *enemyIDPos);
-	bool addTowerToWall(Ogre::Entity *pWall);
+	bool addTowerToWall(Ogre::Entity *pWall, bool checkOnly);
 	bool addTower(Ogre::Vector3 pos);
 	void setVisible(bool visible);
 	void show() { setVisible(true); }

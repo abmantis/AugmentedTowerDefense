@@ -54,8 +54,9 @@ protected:
 
 	void hideScene();
 	void showScene();
+	void resetPointedWallMaterial();
 
-	void addTowerFromMarker(Ogre::Vector3 markerPos);
+	Ogre::Entity* addTowerFromMarker(Ogre::Vector3 markerPos, bool &checkOnly);
 
 	void end() { mContinue = false; }
 	void pause(bool pause);
@@ -65,7 +66,7 @@ protected:
 	Ogre::SceneManager *mSceneMgr;
 	Ogre::Viewport *mViewport;
 	Ogre::Camera *mCamera;
-	Ogre::SceneNode* mObjectNode;
+//	Ogre::SceneNode* mObjectNode;
 	Ogre::SceneNode* mCameraNode;
 	Ogre::SceneNode* mBaseSceneNode;
 	VideoDeviceManager mVideoDeviceManager;
@@ -80,6 +81,7 @@ protected:
 	ScoresManager* mScoresMgr;
 	HUDManager* mHUDMgr;
 	StatsFrameListener *mStatsFrameListener;
+	Ogre::Entity *mPointedWallEntity;
 
 	int mSingleMarkers[2];
 	int mSingleMarkersCount;

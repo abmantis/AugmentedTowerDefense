@@ -23,6 +23,7 @@ AppLogic::AppLogic() : mApplication()
 	mConfigMgr			= NULL;
 	mScoresMgr			= NULL;
 	mHUDMgr				= NULL;
+	mPointedWallEntity	= NULL;
 
 	mOISListener.mParent = this;
 
@@ -109,8 +110,7 @@ bool AppLogic::update(Ogre::Real deltaTime)
 		{			
 			showScene();
 			mBaseSceneNode->setOrientation(mTrackingSystem->getOrientation());
-			mBaseSceneNode->setPosition(mTrackingSystem->getTranslation());
-			
+			mBaseSceneNode->setPosition(mTrackingSystem->getTranslation());			
 		}
 		else
 		{
@@ -118,40 +118,48 @@ bool AppLogic::update(Ogre::Real deltaTime)
 			//mObjectNode->setVisible(false);
 		}
 
-		/*std::vector<Marker> mvec = mTrackingSystem->getVisibleMarkers();
-		for(int i = 0; i < mvec.size(); i++)
-		{
-			Marker m = mvec[i];
-			if(m.id == 0)
-			{
-				mObjectNode->setVisible(true);
-				mObjectNode->setPosition(m.trans.getTrans());
-				mObjectNode->setOrientation(m.trans.extractQuaternion());
-				break; 
-			}
-		}*/
-		
 		Marker marker = mTrackingSystem->getSingleMarkerFromList(mSingleMarkers, mSingleMarkersCount);
 		switch(marker.id)
 		{
 		case 0:
-			mTowerMgr->mPlacementTower->setVisible(true);
-			mTowerMgr->mPlacementTower->setPosition(marker.trans.getTrans());
-			mTowerMgr->mPlacementTower->setOrientation(marker.trans.extractQuaternion());
-			mTimeSinceSeenTowerMarker = 0;
+			{
+				mTowerMgr->mPlacementTower->setVisible(true);
+				mTowerMgr->mPlacementTower->setPosition(marker.trans.getTrans());
+				mTowerMgr->mPlacementTower->setOrientation(marker.trans.extractQuaternion());
+				mTimeSinceSeenTowerMarker = 0;
+				bool checkOnly = true;
+				Ogre::Entity* pWall = addTowerFromMarker(mTowerMgr->mPlacementTower->getPosition(), checkOnly);
+				if(pWall)
+				{
+					if(pWall != mPointedWallEntity)
+					{
+						if(checkOnly)	pWall->setMaterialName("1_Cladding_Stucco_Green");
+						else			pWall->setMaterialName("1_Cladding_Stucco_Red");
+
+						resetPointedWallMaterial();						
+						mPointedWallEntity = pWall;
+					}
+				}
+				else resetPointedWallMaterial();				
+			}
 			break;
 		case 1:
-			mTimeSinceSeenTowerMarker += deltaTime;
-			mTowerMgr->mPlacementTower->setVisible(false);	
-			if(mTimeSinceSeenTowerMarker < 1)
 			{
-				addTowerFromMarker(mTowerMgr->mPlacementTower->getPosition());
-				mTimeSinceSeenTowerMarker = 9999;
+				mTimeSinceSeenTowerMarker += deltaTime;
+				mTowerMgr->mPlacementTower->setVisible(false);	
+				if(mTimeSinceSeenTowerMarker < 1)
+				{
+					bool checkOnly = false;
+					addTowerFromMarker(mTowerMgr->mPlacementTower->getPosition(), checkOnly);
+					mTimeSinceSeenTowerMarker = 9999;
+				}
+				resetPointedWallMaterial();
 			}
 			break;
 		default:
 			mTimeSinceSeenTowerMarker += deltaTime;
-			mTowerMgr->mPlacementTower->setVisible(false);			
+			mTowerMgr->mPlacementTower->setVisible(false);	
+			resetPointedWallMaterial();
 			break;
 		}		
 	}
@@ -355,6 +363,7 @@ void AppLogic::createWebcamPlane(int width, int height, Ogre::Real _distanceFrom
 	planeEntity->setMaterialName("WebcamMaterial");
 	planeEntity->setRenderQueueGroup(Ogre::RENDER_QUEUE_WORLD_GEOMETRY_1);
 	planeEntity->setCastShadows(false);
+	planeEntity->setQueryFlags(AugmentedTowerDefense::MASK_NONE);
 
 	// Create a node for the plane, inserts it in the scene
 	Ogre::SceneNode* node = mCameraNode->createChildSceneNode("planeNode");
@@ -417,9 +426,9 @@ void AppLogic::pause( bool pause )
 	else mHUDMgr->showPopup(false, "");
 }
 
-void AppLogic::addTowerFromMarker( Ogre::Vector3 markerPos )
+Ogre::Entity* AppLogic::addTowerFromMarker( Ogre::Vector3 markerPos, bool &checkOnly )
 {
-	if(mGamePaused) return;
+	if(mGamePaused) return NULL;
 
 	Ogre::Entity *pWallTarget = NULL;
 	float closestDist;
@@ -430,7 +439,18 @@ void AppLogic::addTowerFromMarker( Ogre::Vector3 markerPos )
 	if(mColisionTools->raycastFromPoint(Ogre::Vector3::ZERO, rayDirection, 
 		result, pWallTarget, closestDist, AugmentedTowerDefense::MASK_WALLS))
 	{
-		mTowerMgr->addTowerToWall(pWallTarget);
+		checkOnly = mTowerMgr->addTowerToWall(pWallTarget, checkOnly);
+		return pWallTarget;
+	}
+	return NULL;
+}
+
+void AppLogic::resetPointedWallMaterial()
+{
+	if(mPointedWallEntity)
+	{
+		mPointedWallEntity->setMaterialName("1_Cladding_Stucco_White");
+		mPointedWallEntity = NULL;
 	}
 }
 
@@ -459,22 +479,7 @@ bool AppLogic::OISListener::mouseReleased( const OIS::MouseEvent &arg, OIS::Mous
 	if(mParent->mColisionTools->raycastFromCamera(mParent->mApplication->getRenderWindow(),
 		mParent->mCamera, mouseCoords, result, pWallTarget, closestDist, AugmentedTowerDefense::MASK_WALLS))
 	{
-		mParent->mTowerMgr->addTowerToWall(pWallTarget);
-		//Ogre::SceneNode *pWallNode = pWallTarget->getParentSceneNode();
-		//Ogre::Vector3 wallPos = pWallNode->getPosition();	
-		//Ogre::Entity *pTowerTarget = NULL;
-		//Ogre::Vector3 pointAboveWallCenter(wallPos.x, wallPos.y, 99999);
-
-		////////////////////////////////////////////////////////////////////////////
-		//// Make sure there's not a tower already in this wall 
-		//if(pWallTarget->isVisible() && mParent->mColisionTools->raycastFromPoint(
-		//	pointAboveWallCenter, Ogre::Vector3::NEGATIVE_UNIT_Z, result, pTowerTarget, 
-		//	closestDist, AugmentedTowerDefense::MASK_TOWER) == false)
-		//{
-		//	
-		//	wallPos.z += pWallTarget->getBoundingBox().getSize().z * pWallNode->getScale().z * 0.5f;
-		//	mParent->mTowerMgr->addTower(wallPos);
-		//}	
+		mParent->mTowerMgr->addTowerToWall(pWallTarget, false);
 	}
 	return true;
 }

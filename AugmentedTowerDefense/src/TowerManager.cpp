@@ -79,27 +79,32 @@ bool TowerManager::addTower( Ogre::Vector3 pos )
 	}
 }
 
-bool TowerManager::addTowerToWall( Ogre::Entity *pWall )
+bool TowerManager::addTowerToWall( Ogre::Entity *pWall, bool checkOnly )
 {
 	if(pWall->isVisible() == false) return false;
+	if(mScoresMgr->GetTowerPrice() > mScoresMgr->GetPoints()) return false;
 	
 	float closestDist;
 	Ogre::Vector3 result;
 	Ogre::SceneNode *pWallNode = pWall->getParentSceneNode();
 	Ogre::Vector3 wallPos = pWallNode->getPosition();	
+	Ogre::Quaternion sceneOri = mSceneRootNode->_getDerivedOrientation();	
 	Ogre::Entity *pTowerTarget = NULL;
-	Ogre::Vector3 pointAboveWallCenter(wallPos.x, wallPos.y, 99999);
+	Ogre::Vector3 pointAboveWallCenter = mSceneRootNode->getPosition() + sceneOri * Ogre::Vector3(wallPos.x, wallPos.y, 99999);
+	Ogre::Vector3 rayDirection = sceneOri * Ogre::Vector3::NEGATIVE_UNIT_Z;
 
 	//////////////////////////////////////////////////////////////////////////
 	// Make sure there's not a tower already in this wall 
 	if( mColisionTools->raycastFromPoint(
-		pointAboveWallCenter, Ogre::Vector3::NEGATIVE_UNIT_Z, result, pTowerTarget, 
+		pointAboveWallCenter, rayDirection, result, pTowerTarget, 
 		closestDist, AugmentedTowerDefense::MASK_TOWER) == false)
 	{
 
 		wallPos.z += pWall->getBoundingBox().getSize().z * pWallNode->getScale().z * 0.5f;
-		return addTower(wallPos);
+		if(checkOnly) return true;
+		else return addTower(wallPos);
 	}	
+	return false;
 }
 
 void TowerManager::setVisible( bool visible )

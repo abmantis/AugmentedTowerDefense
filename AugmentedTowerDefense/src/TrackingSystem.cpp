@@ -181,17 +181,8 @@ bool TrackingSystem::isPoseComputed() const
 
 void TrackingSystem::Simulate()
 {
-	mPosition = Ogre::Vector3(50,-100,260);
-	//mOrientation = Ogre::Vector3::UNIT_X.getRotationTo(Ogre::Vector3(0,0,1));
-	//mOrientation = mOrientation * mRot180Z;
-
-	Ogre::Vector3 dir = mPosition - Ogre::Vector3(0,0,1);
-	dir.normalise();
-	Ogre::Vector3 right(dir.z,0,-dir.x);
-	right.normalise();
-	Ogre::Vector3 up = dir.crossProduct(right);
-	mOrientation = Ogre::Quaternion(right,up,dir);
-	mOrientation = mOrientation * Ogre::Quaternion(Ogre::Degree(180.f), Ogre::Vector3::UNIT_Y);
+	mPosition = Ogre::Vector3(0, 0, 260);
+	mOrientation = Ogre::Quaternion(Ogre::Degree(180.f), Ogre::Vector3::UNIT_Y);
 	mPoseComputed = true;
 }
 
