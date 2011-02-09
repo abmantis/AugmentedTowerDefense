@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AugmentedTowerDefense", "AugmentedTowerDefense\AugmentedTowerDefense.vcproj", "{BCD2832C-6ABE-4C09-9994-9023C00C40CE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RenderSystemConfig", "RenderSystemConfig\RenderSystemConfig.vcproj", "{04C87E65-B5D7-4453-9B3D-3B4D11430EAC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -15,10 +13,6 @@ Global
 		{BCD2832C-6ABE-4C09-9994-9023C00C40CE}.Debug|Win32.Build.0 = Debug|Win32
 		{BCD2832C-6ABE-4C09-9994-9023C00C40CE}.Release|Win32.ActiveCfg = Release|Win32
 		{BCD2832C-6ABE-4C09-9994-9023C00C40CE}.Release|Win32.Build.0 = Release|Win32
-		{04C87E65-B5D7-4453-9B3D-3B4D11430EAC}.Debug|Win32.ActiveCfg = Debug|Win32
-		{04C87E65-B5D7-4453-9B3D-3B4D11430EAC}.Debug|Win32.Build.0 = Debug|Win32
-		{04C87E65-B5D7-4453-9B3D-3B4D11430EAC}.Release|Win32.ActiveCfg = Release|Win32
-		{04C87E65-B5D7-4453-9B3D-3B4D11430EAC}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
